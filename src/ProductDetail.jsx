@@ -1,17 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { CartContext } from './CartContext';
 export default function ProductDetail() {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [mainImage, setMainImage] = useState(null);
+  const { addToCart } = useContext(CartContext);
+  const [showMessage, setShowMessage] = useState(false);
   useEffect(() => {
     fetch(`https://dummyjson.com/products/${productId}`)
       .then(res => res.json())
       .then(data => {
         setProduct(data);
-        setMainImage(data.thumbnail);  // imagem principal inicial
+        setMainImage(data.thumbnail);
       });
   }, [productId]);
+  const handleAddToCart = () => {
+    addToCart(product);
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 650);
+  };
   if (!product) return <p>Carregando...</p>;
   return (
     <div className="product-detail">
@@ -34,7 +42,34 @@ export default function ProductDetail() {
           />
         ))}
       </div>
-      <Link to="/shop" className="button-link">Voltar para a Loja</Link>
+      {/* Mensagem de confirmação */}
+      {showMessage && (
+        <div
+          style={{
+            marginTop: '15px',
+            padding: '10px 20px',
+            backgroundColor: '#2563eb',
+            color: 'white',
+            borderRadius: '8px',
+            textAlign: 'center',
+            fontWeight: '700',
+          }}
+        >
+          Produto adicionado ao carrinho!
+        </div>
+      )}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '30px' }}>
+        <button
+          onClick={handleAddToCart}
+          className="button-link"
+          style={{ padding: '18px 60px', border: 'none' }}
+        >
+          Adicionar ao Carrinho
+        </button>
+        <Link to="/shop" className="button-link">
+          Voltar para a Loja
+        </Link>
+      </div>
     </div>
   );
 }

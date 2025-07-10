@@ -206,7 +206,7 @@ h2 {
   display: block;
   margin: 0 auto 20px auto;
   max-width: 100%;
-  max-height: 450px; /* imagem principal maior */
+  max-height: 450px;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.6);
   object-fit: contain;
@@ -233,7 +233,7 @@ h2 {
   box-shadow: 0 6px 15px rgba(37, 99, 235, 0.8);
 }
 .thumbnail.selected {
-  border-color: #3b82f6; /* destaque azul no selecionado */
+  border-color: #3b82f6;
   box-shadow: 0 6px 20px rgba(37, 99, 235, 0.9);
   transform: scale(1.15);
 }
