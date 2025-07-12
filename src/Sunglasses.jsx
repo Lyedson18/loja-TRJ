@@ -1,18 +1,18 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from './CartContext';
-export default function ProductsList() {
+
+export default function Sunglasses() {
   const [products, setProducts] = useState([]);
   const { cartItems } = useContext(CartContext);
   const navigate = useNavigate();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const category = searchParams.get('category') || 'laptops';
+
   useEffect(() => {
-    fetch(`https://dummyjson.com/products/category/${category}`)
+    fetch('https://dummyjson.com/products/category/sunglasses')
       .then(res => res.json())
       .then(data => setProducts(data.products));
-  }, [category]);
+  }, []);
+
   return (
     <div className="products-list" style={{ position: 'relative' }}>
       <div
@@ -24,7 +24,7 @@ export default function ProductsList() {
         }}
       >
         <h2 style={{ color: '#cbd5e1', margin: 0 }}>
-          {category.charAt(0).toUpperCase() + category.slice(1)} disponíveis:
+          Óculos disponíveis:
         </h2>
         <button
           onClick={() => navigate('/checkout')}
@@ -58,10 +58,11 @@ export default function ProductsList() {
           )}
         </button>
       </div>
+
       <ul className="products-ul">
         {products.map(prod => (
           <li key={prod.id} className="product-item">
-            <Link to={`/product/${prod.id}`} className="product-link">
+            <Link to={`/sunglasses/product/${prod.id}`} className="product-link">
               <img
                 src={prod.thumbnail}
                 alt={prod.title}
@@ -73,6 +74,7 @@ export default function ProductsList() {
           </li>
         ))}
       </ul>
+
       <button
         className="back-home-button"
         onClick={() => navigate('/categories')}

@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CartContext } from './CartContext';
-export default function ProductDetail() {
+
+export default function BeautyDetail() {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [mainImage, setMainImage] = useState(null);
   const { addToCart } = useContext(CartContext);
   const [showMessage, setShowMessage] = useState(false);
   const navigate = useNavigate();
+
   useEffect(() => {
     fetch(`https://dummyjson.com/products/${productId}`)
       .then(res => res.json())
@@ -16,12 +18,15 @@ export default function ProductDetail() {
         setMainImage(data.thumbnail);
       });
   }, [productId]);
+
   const handleAddToCart = () => {
     addToCart(product);
     setShowMessage(true);
     setTimeout(() => setShowMessage(false), 650);
   };
+
   if (!product) return <p>Carregando...</p>;
+
   return (
     <div className="product-detail">
       <h2>{product.title}</h2>
@@ -62,30 +67,23 @@ export default function ProductDetail() {
         <button
           onClick={handleAddToCart}
           className="button-link"
-          style={{
-            padding: '18px 60px',
-            backgroundColor: '#2563eb',
-            color: 'white',
-            border: 'none',
-            borderRadius: 8,
-            cursor: 'pointer'
-          }}
+          style={{ padding: '18px 60px', border: 'none' }}
         >
           Adicionar ao Carrinho
         </button>
         <button
-          onClick={() => navigate('/shop')}
+          onClick={() => navigate('/beauty')}
           className="button-link"
           style={{
             padding: '18px 60px',
-            backgroundColor: '#2563eb',
+            backgroundColor: '#3b82f6',
             color: 'white',
             border: 'none',
             borderRadius: 8,
             cursor: 'pointer'
           }}
         >
-          Voltar para Loja de Notebooks
+          Voltar para Loja de Beleza
         </button>
         <button
           onClick={() => navigate('/categories')}

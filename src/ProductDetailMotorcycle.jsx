@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { CartContext } from './CartContext';
-export default function ProductDetail() {
+export default function ProductDetailMotorcycle() {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [mainImage, setMainImage] = useState(null);
@@ -62,30 +62,23 @@ export default function ProductDetail() {
         <button
           onClick={handleAddToCart}
           className="button-link"
-          style={{
-            padding: '18px 60px',
-            backgroundColor: '#2563eb',
-            color: 'white',
-            border: 'none',
-            borderRadius: 8,
-            cursor: 'pointer'
-          }}
+          style={{ padding: '18px 60px', border: 'none' }}
         >
           Adicionar ao Carrinho
         </button>
         <button
-          onClick={() => navigate('/shop')}
+          onClick={() => navigate('/motorcycle')}
           className="button-link"
           style={{
             padding: '18px 60px',
-            backgroundColor: '#2563eb',
+            backgroundColor: '#3b82f6',
             color: 'white',
             border: 'none',
             borderRadius: 8,
             cursor: 'pointer'
           }}
         >
-          Voltar para Loja de Notebooks
+          Voltar para Loja de Motos
         </button>
         <button
           onClick={() => navigate('/categories')}

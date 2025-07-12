@@ -22,11 +22,11 @@ export default function Checkout() {
   const totalFinal = totalProdutos + fretePreco;
   const handleFinalizar = () => {
     alert(`Compra finalizada!\nTotal a pagar: R$ ${totalFinal.toFixed(2)}`);
-    clearCart();   // limpa o carrinho
-    navigate('/'); // volta pra home
+    clearCart();
+    navigate('/'); 
   };
   const handleVoltarLoja = () => {
-    navigate('/shop');
+    navigate('/categories');
   };
   return (
     <div style={{ maxWidth: 700, margin: '40px auto', padding: 20, background: '#1e293b', color: '#cbd5e1', borderRadius: 12 }}>
@@ -185,7 +185,7 @@ export default function Checkout() {
         disabled={cartItems.length === 0}
         title={cartItems.length === 0 ? 'Carrinho vazio' : 'Finalizar compra'}
       >
-        Finalizar Compra
+        Finalizar Compra(s)!
       </button>
       <button
         onClick={handleVoltarLoja}
@@ -202,7 +202,7 @@ export default function Checkout() {
           width: '100%',
         }}
       >
-        Voltar para a Loja
+        Voltar para Categorias!
       </button>
     </div>
   );

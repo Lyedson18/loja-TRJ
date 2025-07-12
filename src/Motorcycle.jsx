@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from './CartContext';
-export default function ProductsList() {
+export default function Motorcycle() {
   const [products, setProducts] = useState([]);
   const { cartItems } = useContext(CartContext);
   const navigate = useNavigate();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const category = searchParams.get('category') || 'laptops';
+  const category = 'motorcycle';
   useEffect(() => {
     fetch(`https://dummyjson.com/products/category/${category}`)
       .then(res => res.json())
@@ -24,7 +22,7 @@ export default function ProductsList() {
         }}
       >
         <h2 style={{ color: '#cbd5e1', margin: 0 }}>
-          {category.charAt(0).toUpperCase() + category.slice(1)} disponíveis:
+          Motorcycles disponíveis:
         </h2>
         <button
           onClick={() => navigate('/checkout')}
@@ -61,7 +59,7 @@ export default function ProductsList() {
       <ul className="products-ul">
         {products.map(prod => (
           <li key={prod.id} className="product-item">
-            <Link to={`/product/${prod.id}`} className="product-link">
+            <Link to={`/motorcycle/product/${prod.id}`} className="product-link">
               <img
                 src={prod.thumbnail}
                 alt={prod.title}
