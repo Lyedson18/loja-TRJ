@@ -1,19 +1,16 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from './CartContext';
-
 export default function Beauty() {
   const [products, setProducts] = useState([]);
   const { cartItems } = useContext(CartContext);
   const navigate = useNavigate();
   const category = 'beauty';
-
   useEffect(() => {
     fetch(`https://dummyjson.com/products/category/${category}`)
       .then(res => res.json())
       .then(data => setProducts(data.products));
   }, [category]);
-
   return (
     <div className="products-list" style={{ position: 'relative' }}>
       <div

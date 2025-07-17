@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from './CartContext';
-export default function Sunglasses() {
+export default function MensShirts() {
   const [products, setProducts] = useState([]);
   const { cartItems } = useContext(CartContext);
   const navigate = useNavigate();
+  const category = 'mens-shirts';
   useEffect(() => {
-    fetch('https://dummyjson.com/products/category/sunglasses')
+    fetch(`https://dummyjson.com/products/category/${category}`)
       .then(res => res.json())
       .then(data => setProducts(data.products));
-  }, []);
+  }, [category]);
   return (
     <div className="products-list" style={{ position: 'relative' }}>
       <div
@@ -21,7 +22,7 @@ export default function Sunglasses() {
         }}
       >
         <h2 style={{ color: '#cbd5e1', margin: 0 }}>
-          Óculos disponíveis:
+          Camisas Masculinas disponíveis:
         </h2>
         <button
           onClick={() => navigate('/checkout')}
@@ -58,7 +59,7 @@ export default function Sunglasses() {
       <ul className="products-ul">
         {products.map(prod => (
           <li key={prod.id} className="product-item">
-            <Link to={`/sunglasses/product/${prod.id}`} className="product-link">
+            <Link to={`/mens-shirts/product/${prod.id}`} className="product-link">
               <img
                 src={prod.thumbnail}
                 alt={prod.title}

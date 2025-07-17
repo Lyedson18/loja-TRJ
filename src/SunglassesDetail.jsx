@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CartContext } from './CartContext';
-
 export default function SunglassesDetail() {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
@@ -9,7 +8,6 @@ export default function SunglassesDetail() {
   const { addToCart } = useContext(CartContext);
   const [showMessage, setShowMessage] = useState(false);
   const navigate = useNavigate();
-
   useEffect(() => {
     fetch(`https://dummyjson.com/products/${productId}`)
       .then(res => res.json())
@@ -18,15 +16,12 @@ export default function SunglassesDetail() {
         setMainImage(data.thumbnail);
       });
   }, [productId]);
-
   const handleAddToCart = () => {
     addToCart(product);
     setShowMessage(true);
     setTimeout(() => setShowMessage(false), 650);
   };
-
   if (!product) return <p>Carregando...</p>;
-
   return (
     <div className="product-detail">
       <h2>{product.title}</h2>
@@ -36,7 +31,6 @@ export default function SunglassesDetail() {
       <p><strong>Marca:</strong> {product.brand}</p>
       <p><strong>Estoque:</strong> {product.stock}</p>
       <p><strong>Avaliação:</strong> {product.rating}</p>
-
       <h3>Imagens:</h3>
       <div className="product-images">
         {product.images && product.images.map((img, idx) => (
@@ -49,7 +43,6 @@ export default function SunglassesDetail() {
           />
         ))}
       </div>
-
       {showMessage && (
         <div
           style={{
@@ -65,7 +58,6 @@ export default function SunglassesDetail() {
           Produto adicionado ao carrinho!
         </div>
       )}
-
       <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '30px' }}>
         <button
           onClick={handleAddToCart}

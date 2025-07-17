@@ -1,12 +1,10 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from './CartContext';
-
 export default function Categories() {
   const navigate = useNavigate();
   const { cartItems } = useContext(CartContext);
   const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-
   return (
     <div
       className="products-list"
@@ -27,7 +25,6 @@ export default function Categories() {
       <h2 style={{ marginBottom: 30, fontWeight: '900' }}>
         Categorias Disponíveis⏬
       </h2>
-
       <button
         onClick={() => navigate('/checkout')}
         style={{
@@ -62,7 +59,6 @@ export default function Categories() {
           </span>
         )}
       </button>
-
       <button
         onClick={() => navigate('/shop?category=laptops')}
         style={buttonStyle}
@@ -71,7 +67,6 @@ export default function Categories() {
       >
         Notebooks
       </button>
-
       <button
         onClick={() => navigate('/fragrances')}
         style={buttonStyle}
@@ -80,7 +75,6 @@ export default function Categories() {
       >
         Fragrances
       </button>
-
       <button
         onClick={() => navigate('/motorcycle')}
         style={buttonStyle}
@@ -89,7 +83,6 @@ export default function Categories() {
       >
         Motorcycle
       </button>
-
       <button
         onClick={() => navigate('/sunglasses')}
         style={buttonStyle}
@@ -98,7 +91,6 @@ export default function Categories() {
       >
         Sunglasses
       </button>
-
       <button
         onClick={() => navigate('/beauty')}
         style={buttonStyle}
@@ -107,8 +99,22 @@ export default function Categories() {
       >
         Beauty
       </button>
-
-      {/* Botão novo para Furniture */}
+      <button
+        onClick={() => navigate('/mens-shoes')}
+        style={buttonStyle}
+        onMouseEnter={hoverIn}
+        onMouseLeave={hoverOut}
+      >
+        MensShoes
+      </button>
+      <button
+        onClick={() => navigate('/mens-shirts')}
+        style={buttonStyle}
+        onMouseEnter={hoverIn}
+        onMouseLeave={hoverOut}
+      >
+        MensShirts
+      </button>
       <button
         onClick={() => navigate('/furniture')}
         style={buttonStyle}
@@ -120,7 +126,6 @@ export default function Categories() {
     </div>
   );
 }
-
 const buttonStyle = {
   padding: '18px 50px',
   fontWeight: '700',
@@ -135,12 +140,10 @@ const buttonStyle = {
   userSelect: 'none',
   width: '250px',
 };
-
 function hoverIn(e) {
   e.currentTarget.style.background = 'linear-gradient(90deg, #3b82f6, #2563eb)';
   e.currentTarget.style.boxShadow = '0 8px 28px rgba(37, 99, 235, 1)';
 }
-
 function hoverOut(e) {
   e.currentTarget.style.background = 'linear-gradient(90deg, #2563eb, #3b82f6)';
   e.currentTarget.style.boxShadow = '0 6px 20px rgba(37, 99, 235, 0.85)';

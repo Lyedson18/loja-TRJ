@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CartContext } from './CartContext';
-export default function BeautyDetail() {
+export default function MensShirtsDetail() {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [mainImage, setMainImage] = useState(null);
@@ -67,7 +67,7 @@ export default function BeautyDetail() {
           Adicionar ao Carrinho
         </button>
         <button
-          onClick={() => navigate('/beauty')}
+          onClick={() => navigate('/mens-shirts')}
           className="button-link"
           style={{
             padding: '18px 60px',
@@ -78,7 +78,7 @@ export default function BeautyDetail() {
             cursor: 'pointer'
           }}
         >
-          Voltar para Loja de Beleza
+          Voltar para Loja de Camisas
         </button>
         <button
           onClick={() => navigate('/categories')}
