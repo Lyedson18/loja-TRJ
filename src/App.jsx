@@ -1,13 +1,10 @@
 import React from 'react';
-// Importa componentes do react-router-dom para criar as rotas da aplicação
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// Importa os componentes das páginas e seções do apps
 import Home from './Home';
 import Categories from './Categories';
 import ProductsList from './ProductsList';
 import ProductDetail from './ProductDetail';
 import Checkout from './Checkout';
-// Importa o contexto do carrinho para gerenciar estado global do carrinho para todas a categorias
 import { CartProvider } from './CartContext';
 import Fragrances from './Fragrances';
 import FragrancesDetail from './FragrancesDetail';
@@ -21,13 +18,10 @@ import Beauty from './Beauty';
 import BeautyDetail from './BeautyDetail';
 import Furniture from './Furniture';
 import FurnitureDetail from './FurnitureDetail';
-// Import MensShoes e MensShoesDetail
 import MensShoes from './MensShoes';
 import MensShoesDetail from './MensShoesDetail';
 function App() {
   return (
-    //  Envolve toda a aplicação com o CartProvider para que qualquer componente
-    //  possa acessar o estado do carrinho de compras via (context)
     <CartProvider>
       {/*Configura o roteamento da aplicação usando BrowserRouter*/}
       <Router>
