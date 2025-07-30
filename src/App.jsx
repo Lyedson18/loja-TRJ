@@ -33,8 +33,8 @@ function App() {
             {/*categories*/}
             <Route path="/categories" element={<Categories />} />
             {/*laptops*/}
-            <Route path="/shop" element={<ProductsList />} /> {/* Lista de produtos */}
-            <Route path="/product/:productId" element={<ProductDetail />} /> {/* Detalhes do produto por ID */}
+            <Route path="/shop" element={<ProductsList />} />
+            <Route path="/product/:productId" element={<ProductDetail />} />
             {/*checkout*/}
             <Route path="/checkout" element={<Checkout />} />
             {/*Fragrances*/}

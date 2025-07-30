@@ -1,27 +1,21 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from './CartContext';
-
 export default function Sunglasses() {
   const [products, setProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(''); // Estado da barra de pesquisa
+  const [searchTerm, setSearchTerm] = useState('');
   const { cartItems } = useContext(CartContext);
   const navigate = useNavigate();
-
   useEffect(() => {
     fetch('https://dummyjson.com/products/category/sunglasses')
       .then(res => res.json())
       .then(data => setProducts(data.products));
   }, []);
-
-  // Filtra produtos conforme o termo pesquisado
   const filteredProducts = products.filter(prod =>
     prod.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   return (
     <div className="products-list" style={{ position: 'relative' }}>
-      {/* Barra de pesquisa */}
       <input
         type="text"
         placeholder="Pesquisar produto..."
@@ -34,7 +28,6 @@ export default function Sunglasses() {
           fontSize: '16px'
         }}
       />
-
       <div
         style={{
           display: 'flex',
@@ -78,7 +71,6 @@ export default function Sunglasses() {
           )}
         </button>
       </div>
-
       <ul className="products-ul">
         {filteredProducts.map(prod => (
           <li key={prod.id} className="product-item">
@@ -94,7 +86,6 @@ export default function Sunglasses() {
           </li>
         ))}
       </ul>
-
       <button
         className="back-home-button"
         onClick={() => navigate('/categories')}

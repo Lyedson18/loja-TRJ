@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { CartContext } from './CartContext';
 import { useNavigate } from 'react-router-dom';
 export default function Checkout() {
-  const { cartItems, clearCart, setCartItems } = useContext(CartContext); // ADICIONEI setCartItems
+  const { cartItems, clearCart, setCartItems } = useContext(CartContext);
   const navigate = useNavigate();
   const [customerData, setCustomerData] = useState({
     nome: '',

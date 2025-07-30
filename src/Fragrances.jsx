@@ -1,27 +1,21 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from './CartContext';
-
 export default function Fragrances() {
   const [products, setProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(''); // Estado da barra de pesquisa
+  const [searchTerm, setSearchTerm] = useState('');
   const { cartItems } = useContext(CartContext);
   const navigate = useNavigate();
-
   useEffect(() => {
     fetch('https://dummyjson.com/products/category/fragrances')
       .then(res => res.json())
       .then(data => setProducts(data.products));
   }, []);
-
-  // Filtra produtos conforme o termo pesquisado
   const filteredProducts = products.filter(prod =>
     prod.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   return (
     <div className="products-list" style={{ position: 'relative' }}>
-      {/* Barra de pesquisa */}
       <input
         type="text"
         placeholder="Pesquisar produto..."
@@ -34,7 +28,6 @@ export default function Fragrances() {
           fontSize: '16px'
         }}
       />
-
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <h2 style={{ color: '#cbd5e1', margin: 0 }}>Fragrances disponíveis:</h2>
         <button
@@ -69,7 +62,6 @@ export default function Fragrances() {
           )}
         </button>
       </div>
-
       <ul className="products-ul">
         {filteredProducts.map(prod => (
           <li key={prod.id} className="product-item">
@@ -81,7 +73,6 @@ export default function Fragrances() {
           </li>
         ))}
       </ul>
-
       <button
         className="back-home-button"
         onClick={() => navigate('/categories')}

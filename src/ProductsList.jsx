@@ -1,30 +1,24 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { CartContext } from './CartContext';
-
 export default function ProductsList() {
   const [products, setProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(''); // Estado da barra de pesquisa
+  const [searchTerm, setSearchTerm] = useState('');
   const { cartItems } = useContext(CartContext);
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const category = searchParams.get('category') || 'laptops';
-
   useEffect(() => {
     fetch(`https://dummyjson.com/products/category/${category}`)
       .then(res => res.json())
       .then(data => setProducts(data.products));
   }, [category]);
-
-  // Filtra produtos conforme o termo pesquisado
   const filteredProducts = products.filter(prod =>
     prod.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   return (
     <div className="products-list" style={{ position: 'relative' }}>
-      {/* Barra de pesquisa */}
       <input
         type="text"
         placeholder="Pesquisar produto..."
@@ -37,7 +31,6 @@ export default function ProductsList() {
           fontSize: '16px'
         }}
       />
-
       <div
         style={{
           display: 'flex',
@@ -81,7 +74,6 @@ export default function ProductsList() {
           )}
         </button>
       </div>
-
       <ul className="products-ul">
         {filteredProducts.map(prod => (
           <li key={prod.id} className="product-item">
@@ -97,7 +89,6 @@ export default function ProductsList() {
           </li>
         ))}
       </ul>
-
       <button
         className="back-home-button"
         onClick={() => navigate('/categories')}
