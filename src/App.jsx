@@ -20,41 +20,62 @@ import Furniture from './Furniture';
 import FurnitureDetail from './FurnitureDetail';
 import MensShoes from './MensShoes';
 import MensShoesDetail from './MensShoesDetail';
+
+// Novos imports
+import Login from './Login';
+import Register from './Register';
+import ManageProducts from './ManageProducts';
+
 function App() {
   return (
     <CartProvider>
-      {/*Configura o roteamento da aplicação usando BrowserRouter*/}
       <Router>
         <div>
-          {/*Define todas as rotas da aplicação*/}
           <Routes>
-            {/*Home*/}
-            <Route path="/" element={<Home />} />
-            {/*categories*/}
+            {/* Login */}
+            <Route path="/" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+
+            {/* Home */}
+            <Route path="/home" element={<Home />} />
+
+            {/* Manage Products */}
+            <Route path="/manage-products" element={<ManageProducts />} />
+
+            {/* Categories */}
             <Route path="/categories" element={<Categories />} />
-            {/*laptops*/}
+
+            {/* Laptops */}
             <Route path="/shop" element={<ProductsList />} />
             <Route path="/product/:productId" element={<ProductDetail />} />
-            {/*checkout*/}
+
+            {/* Checkout */}
             <Route path="/checkout" element={<Checkout />} />
-            {/*Fragrances*/}
+
+            {/* Fragrances */}
             <Route path="/fragrances" element={<Fragrances />} />
             <Route path="/fragrances/product/:productId" element={<FragrancesDetail />} />
-            {/*MensShirts*/}
+
+            {/* MensShirts */}
             <Route path="/mens-shirts" element={<MensShirts />} />
             <Route path="/mens-shirts/product/:productId" element={<MensShirtsDetail />} />
-            {/*Motorcycle*/}
+
+            {/* Motorcycle */}
             <Route path="/motorcycle" element={<Motorcycle />} />
             <Route path="/motorcycle/product/:productId" element={<ProductDetailMotorcycle />} />
-            {/*Sunglasses*/}
+
+            {/* Sunglasses */}
             <Route path="/sunglasses" element={<Sunglasses />} />
             <Route path="/sunglasses/product/:productId" element={<SunglassesDetail />} />
-            {/*Beauty*/}
+
+            {/* Beauty */}
             <Route path="/beauty" element={<Beauty />} />
             <Route path="/beauty/product/:productId" element={<BeautyDetail />} />
-            {/*Furniture*/}
+
+            {/* Furniture */}
             <Route path="/furniture" element={<Furniture />} />
             <Route path="/furniture/product/:productId" element={<FurnitureDetail />} />
+
             {/* MensShoes */}
             <Route path="/mens-shoes" element={<MensShoes />} />
             <Route path="/mens-shoes/product/:productId" element={<MensShoesDetail />} />
@@ -64,4 +85,5 @@ function App() {
     </CartProvider>
   );
 }
+
 export default App;

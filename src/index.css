@@ -237,3 +237,7 @@ h2 {
   box-shadow: 0 6px 20px rgba(37, 99, 235, 0.9);
   transform: scale(1.15);
 }
+.small-btn {
+  padding: 8px 16px; /* menor que o padrão */
+  font-size: 14px;   /* ajusta o tamanho da fonte */
+}
