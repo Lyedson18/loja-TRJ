@@ -1,245 +1,249 @@
+/* estilo global */
 html, body {
-    height: 100%;
-      margin: 0;
-        padding: 0;
-          background: linear-gradient(135deg, #1e293b, #0f172a);
-            color: #cbd5e1;
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-              }
-              h2 {
-                text-align: center;
-                  color: #cbd5e1;
-                    margin-bottom: 20px;
-                    }
-                    .home {
-                      min-height: 80vh;
-                        display: flex;
-                          flex-direction: column;
-                            justify-content: center;
-                              align-items: center;
-                                text-align: center;
-                                  padding: 0 20px;
-                                  }
-                                  .home h1 {
-                                    font-size: 3.5rem;
-                                      margin-bottom: 1rem;
-                                        font-weight: 900;
-                                        }
-                                        .home .highlight {
-                                          background: linear-gradient(90deg, #3b82f6, #2563eb);
-                                            -webkit-background-clip: text;
-                                              -webkit-text-fill-color: transparent;
-                                              }
-                                              .home .lead {
-                                                font-size: 1.5rem;
-                                                  margin-bottom: 0.5rem;
-                                                    font-weight: 600;
-                                                    }
-                                                    .home .sublead {
-                                                      font-size: 1.25rem;
-                                                        margin-bottom: 2.5rem;
-                                                          font-weight: 400;
-                                                            opacity: 0.8;
-                                                            }
-                                                            .home .button-link {
-                                                              padding: 15px 40px;
-                                                                background: linear-gradient(90deg, #2563eb, #3b82f6);
-                                                                  color: white;
-                                                                    font-weight: 700;
-                                                                      font-size: 1.25rem;
-                                                                        border-radius: 12px;
-                                                                          box-shadow: 0 5px 15px rgba(37, 99, 235, 0.7);
-                                                                            text-decoration: none;
-                                                                              transition: background 0.3s ease, box-shadow 0.3s ease;
-                                                                                cursor: pointer;
-                                                                                }
-                                                                                .home .button-link:hover {
-                                                                                  background: linear-gradient(90deg, #3b82f6, #2563eb);
-                                                                                    box-shadow: 0 7px 20px rgba(37, 99, 235, 0.9);
-                                                                                      color: #e0e7ff;
-                                                                                      }
-                                                                                      .products-list {
-                                                                                        max-width: 1100px;
-                                                                                          margin: 40px auto;
-                                                                                            padding: 0 20px;
-                                                                                              color: #cbd5e1;
-                                                                                              }
-                                                                                              .products-ul {
-                                                                                                list-style: none;
-                                                                                                  display: flex;
-                                                                                                    flex-wrap: wrap;
-                                                                                                      gap: 25px;
-                                                                                                        padding: 0;
-                                                                                                          justify-content: center;
-                                                                                                          }
-                                                                                                          .product-item {
-                                                                                                            background: linear-gradient(135deg, #1e293b, #0f172a);
-                                                                                                              border-radius: 12px;
-                                                                                                                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-                                                                                                                  width: 230px;
-                                                                                                                    padding: 15px;
-                                                                                                                      transition: transform 0.3s ease, box-shadow 0.3s ease;
-                                                                                                                      }
-                                                                                                                      .product-item:hover {
-                                                                                                                        transform: scale(1.05);
-                                                                                                                          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.7);
-                                                                                                                          }
-                                                                                                                          .product-link {
-                                                                                                                            color: #cbd5e1;
-                                                                                                                              text-decoration: none;
-                                                                                                                                display: flex;
-                                                                                                                                  flex-direction: column;
-                                                                                                                                    align-items: center;
-                                                                                                                                    }
-                                                                                                                                    .product-image {
-                                                                                                                                      width: 100%;
-                                                                                                                                        height: 140px;
-                                                                                                                                          object-fit: contain;
-                                                                                                                                            margin-bottom: 15px;
-                                                                                                                                              border-radius: 8px;
-                                                                                                                                                background-color: #0f172a;
-                                                                                                                                                }
-                                                                                                                                                .product-info {
-                                                                                                                                                  font-weight: 700;
-                                                                                                                                                    font-size: 1.1rem;
-                                                                                                                                                      margin-bottom: 8px;
-                                                                                                                                                        text-align: center;
-                                                                                                                                                          min-height: 48px;
-                                                                                                                                                          }
-                                                                                                                                                          .product-price {
-                                                                                                                                                            font-weight: 600;
-                                                                                                                                                              font-size: 1rem;
-                                                                                                                                                                color: #93c5fd;
-                                                                                                                                                                }
-                                                                                                                                                                .back-home-button {
-                                                                                                                                                                  position: fixed;
-                                                                                                                                                                    bottom: 25px;
-                                                                                                                                                                      left: 50%;
-                                                                                                                                                                        transform: translateX(-50%);
-                                                                                                                                                                          padding: 16px 50px;
-                                                                                                                                                                            background: linear-gradient(90deg, #2563eb, #3b82f6);
-                                                                                                                                                                              color: white;
-                                                                                                                                                                                font-weight: 700;
-                                                                                                                                                                                  font-size: 1.3rem;
-                                                                                                                                                                                    border: none;
-                                                                                                                                                                                      border-radius: 18px;
-                                                                                                                                                                                        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.85);
-                                                                                                                                                                                          cursor: pointer;
-                                                                                                                                                                                            transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-                                                                                                                                                                                              z-index: 1000;
-                                                                                                                                                                                                user-select: none;
-                                                                                                                                                                                                  transform-origin: center;
-                                                                                                                                                                                                  }
-                                                                                                                                                                                                  .back-home-button:hover {
-                                                                                                                                                                                                    background: linear-gradient(90deg, #3b82f6, #2563eb);
-                                                                                                                                                                                                      box-shadow: 0 8px 28px rgba(37, 99, 235, 1);
-                                                                                                                                                                                                        transform: translateX(-50%) scale(1.05);
-                                                                                                                                                                                                        }
-                                                                                                                                                                                                        .product-detail {
-                                                                                                                                                                                                          max-width: 900px;
-                                                                                                                                                                                                            margin: 40px auto;
-                                                                                                                                                                                                              padding: 20px;
-                                                                                                                                                                                                                background: linear-gradient(135deg, #1e293b, #0f172a);
-                                                                                                                                                                                                                  border-radius: 16px;
-                                                                                                                                                                                                                    box-shadow: 0 6px 15px rgba(37, 57, 91, 0.7);
-                                                                                                                                                                                                                      color: #cbd5e1;
-                                                                                                                                                                                                                      }
-                                                                                                                                                                                                                      .product-detail h2 {
-                                                                                                                                                                                                                        text-align: center;
-                                                                                                                                                                                                                          margin-bottom: 20px;
-                                                                                                                                                                                                                            font-weight: 900;
-                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                            .main-thumbnail {
-                                                                                                                                                                                                                              display: block;
-                                                                                                                                                                                                                                margin: 0 auto 20px auto;
-                                                                                                                                                                                                                                  max-width: 100%;
-                                                                                                                                                                                                                                    border-radius: 12px;
-                                                                                                                                                                                                                                      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-                                                                                                                                                                                                                                      }
-                                                                                                                                                                                                                                      .product-detail p {
-                                                                                                                                                                                                                                        font-size: 1.1rem;
-                                                                                                                                                                                                                                          line-height: 1.5;
-                                                                                                                                                                                                                                            margin-bottom: 12px;
-                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                            .product-images {
-                                                                                                                                                                                                                                              display: flex;
-                                                                                                                                                                                                                                                gap: 12px;
-                                                                                                                                                                                                                                                  justify-content: center;
-                                                                                                                                                                                                                                                    flex-wrap: wrap;
-                                                                                                                                                                                                                                                      margin-bottom: 30px;
-                                                                                                                                                                                                                                                      }
-                                                                                                                                                                                                                                                      .thumbnail {
-                                                                                                                                                                                                                                                        width: 120px;
-                                                                                                                                                                                                                                                          height: 80px;
-                                                                                                                                                                                                                                                            object-fit: contain;
-                                                                                                                                                                                                                                                              border-radius: 8px;
-                                                                                                                                                                                                                                                                box-shadow: 0 3px 6px rgba(37, 57, 91, 0.5);
-                                                                                                                                                                                                                                                                  cursor: pointer;
-                                                                                                                                                                                                                                                                    transition: transform 0.3s ease;
-                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                    .thumbnail:hover {
-                                                                                                                                                                                                                                                                      transform: scale(1.1);
-                                                                                                                                                                                                                                                                      }
-                                                                                                                                                                                                                                                                      .button-link {
-                                                                                                                                                                                                                                                                        display: inline-block;
-                                                                                                                                                                                                                                                                          padding: 18px 60px;
-                                                                                                                                                                                                                                                                            background: linear-gradient(90deg, #2563eb, #3b82f6);
-                                                                                                                                                                                                                                                                              color: white;
-                                                                                                                                                                                                                                                                                font-weight: 800;
-                                                                                                                                                                                                                                                                                  font-size: 1.5rem;
-                                                                                                                                                                                                                                                                                    border-radius: 16px;
-                                                                                                                                                                                                                                                                                      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.85);
-                                                                                                                                                                                                                                                                                        text-decoration: none;
-                                                                                                                                                                                                                                                                                          transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-                                                                                                                                                                                                                                                                                            margin-top: 30px;
-                                                                                                                                                                                                                                                                                              cursor: pointer;
-                                                                                                                                                                                                                                                                                                user-select: none;
-                                                                                                                                                                                                                                                                                                  text-align: center;
-                                                                                                                                                                                                                                                                                                  }
-                                                                                                                                                                                                                                                                                                  .button-link:hover {
-                                                                                                                                                                                                                                                                                                    background: linear-gradient(90deg, #3b82f6, #2563eb);
-                                                                                                                                                                                                                                                                                                      box-shadow: 0 8px 28px rgba(37, 99, 235, 1);
-                                                                                                                                                                                                                                                                                                        color: #e0e7ff;
-                                                                                                                                                                                                                                                                                                          transform: scale(1.05);
-                                                                                                                                                                                                                                                                                                          }
-                                                                                                                                                                                                                                                                                                          .main-thumbnail {
-                                                                                                                                                                                                                                                                                                            display: block;
-                                                                                                                                                                                                                                                                                                              margin: 0 auto 20px auto;
-                                                                                                                                                                                                                                                                                                                max-width: 100%;
-                                                                                                                                                                                                                                                                                                                  max-height: 450px;
-                                                                                                                                                                                                                                                                                                                    border-radius: 12px;
-                                                                                                                                                                                                                                                                                                                      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-                                                                                                                                                                                                                                                                                                                        object-fit: contain;
-                                                                                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                                                                                        .product-images {
-                                                                                                                                                                                                                                                                                                                          display: flex;
-                                                                                                                                                                                                                                                                                                                            gap: 12px;
-                                                                                                                                                                                                                                                                                                                              justify-content: center;
-                                                                                                                                                                                                                                                                                                                                flex-wrap: wrap;
-                                                                                                                                                                                                                                                                                                                                  margin-bottom: 30px;
-                                                                                                                                                                                                                                                                                                                                  }
-                                                                                                                                                                                                                                                                                                                                  .thumbnail {
-                                                                                                                                                                                                                                                                                                                                    width: 120px;
-                                                                                                                                                                                                                                                                                                                                      height: 80px;
-                                                                                                                                                                                                                                                                                                                                        object-fit: contain;
-                                                                                                                                                                                                                                                                                                                                          border-radius: 8px;
-                                                                                                                                                                                                                                                                                                                                            box-shadow: 0 3px 6px rgba(37, 57, 91, 0.5);
-                                                                                                                                                                                                                                                                                                                                              cursor: pointer;
-                                                                                                                                                                                                                                                                                                                                                transition: transform 0.3s ease, box-shadow 0.3s ease;
-                                                                                                                                                                                                                                                                                                                                                  border: 2px solid transparent;
-                                                                                                                                                                                                                                                                                                                                                  }
-                                                                                                                                                                                                                                                                                                                                                  .thumbnail:hover {
-                                                                                                                                                                                                                                                                                                                                                    transform: scale(1.1);
-                                                                                                                                                                                                                                                                                                                                                      box-shadow: 0 6px 15px rgba(37, 99, 235, 0.8);
-                                                                                                                                                                                                                                                                                                                                                      }
-                                                                                                                                                                                                                                                                                                                                                      .thumbnail.selected {
-                                                                                                                                                                                                                                                                                                                                                        border-color: #3b82f6;
-                                                                                                                                                                                                                                                                                                                                                          box-shadow: 0 6px 20px rgba(37, 99, 235, 0.9);
-                                                                                                                                                                                                                                                                                                                                                            transform: scale(1.15);
-                                                                                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                                                                                            .small-btn {
-                                                                                                                                                                                                                                                                                                                                                              padding: 8px 16px; /* menor que o padrão */
-                                                                                                                                                                                                                                                                                                                                                                font-size: 14px;   /* ajusta o tamanho da fonte */
-                                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                                
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: #cbd5e1;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+  text-align: center;
+  color: #cbd5e1;
+  margin-bottom: 20px;
+}
+
+.home {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.home h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  font-weight: 900;
+}
+
+.home .highlight {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.home .lead {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.home .sublead {
+  font-size: 1.25rem;
+  margin-bottom: 2.5rem;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.home .button-link {
+  padding: 15px 40px;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  color: white;
+  font-weight: 700;
+  font-size: 1.25rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.7);
+  text-decoration: none;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.home .button-link:hover {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  box-shadow: 0 7px 20px rgba(37, 99, 235, 0.9);
+  color: #e0e7ff;
+}
+
+.products-list {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+  color: #cbd5e1;
+}
+
+.products-ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  padding: 0;
+  justify-content: center;
+}
+
+.product-item {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  width: 230px;
+  padding: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.7);
+}
+
+.product-link {
+  color: #cbd5e1;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.product-image {
+  width: 100%;
+  height: 140px;
+  object-fit: contain;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  background-color: #0f172a;
+}
+
+.product-info {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  text-align: center;
+  min-height: 48px;
+}
+
+.product-price {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #93c5fd;
+}
+
+.back-home-button {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 16px 50px;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  color: white;
+  font-weight: 700;
+  font-size: 1.3rem;
+  border: none;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.85);
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+  z-index: 1000;
+  user-select: none;
+  transform-origin: center;
+}
+
+.back-home-button:hover {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  box-shadow: 0 8px 28px rgba(37, 99, 235, 1);
+  transform: translateX(-50%) scale(1.05);
+}
+
+.product-detail {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border-radius: 16px;
+  box-shadow: 0 6px 15px rgba(37, 57, 91, 0.7);
+  color: #cbd5e1;
+}
+
+.product-detail h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 900;
+}
+
+.main-thumbnail {
+  display: block;
+  margin: 0 auto 20px auto;
+  max-width: 100%;
+  max-height: 450px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+  object-fit: contain;
+}
+
+.product-detail p {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.product-images {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.thumbnail {
+  width: 120px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(37, 57, 91, 0.5);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.thumbnail:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.8);
+}
+
+.thumbnail.selected {
+  border-color: #3b82f6;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.9);
+  transform: scale(1.15);
+}
+
+/* Botões adicionais */
+.button-link {
+  display: inline-block;
+  padding: 18px 60px;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  color: white;
+  font-weight: 800;
+  font-size: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.85);
+  text-decoration: none;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+  margin-top: 30px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+}
+
+.button-link:hover {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  box-shadow: 0 8px 28px rgba(37, 99, 235, 1);
+  color: #e0e7ff;
+  transform: scale(1.05);
+}
+
+/* Botões pequenos */
+.small-btn {
+  padding: 8px 16px;
+  font-size: 14px;
 }
