@@ -12,7 +12,7 @@ export default function Home() {
       <Link to="/categories" className="button-link">Ir para a Loja</Link>
 
       {/* Botão para gerenciar produtos */}
-      <Link to="/GerenciarProdutos" className="button-link">Gerenciar Produtos</Link>
+      <Link to="/manage-products" className="button-link">Gerenciar Produtos</Link>
     </div>
   );
 }

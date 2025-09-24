@@ -1,4 +1,5 @@
 import React from 'react';
+import { supabase } from "./utils/supabase";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Home';
 import Categories from './Categories';
@@ -20,11 +21,10 @@ import Furniture from './Furniture';
 import FurnitureDetail from './FurnitureDetail';
 import MensShoes from './MensShoes';
 import MensShoesDetail from './MensShoesDetail';
-
-// Novos imports
 import Login from './Login';
 import Register from './Register';
 import ManageProducts from './ManageProducts';
+import Product2vList from './Product2vList';
 
 function App() {
   return (
@@ -79,11 +79,13 @@ function App() {
             {/* MensShoes */}
             <Route path="/mens-shoes" element={<MensShoes />} />
             <Route path="/mens-shoes/product/:productId" element={<MensShoesDetail />} />
+
+            {/* Nova rota para product_2v */}
+            <Route path="/product-2v" element={<Product2vList />} />
           </Routes>
         </div>
       </Router>
     </CartProvider>
   );
 }
-
 export default App;
