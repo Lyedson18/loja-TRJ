@@ -19,7 +19,7 @@ export default function Categories() {
       ],
     },
     {
-      label: 'Fragrances',
+      label: 'Perfumes',
       path: '/fragrances',
       products: [
         'Calvin Klein CK One',
@@ -30,7 +30,7 @@ export default function Categories() {
       ],
     },
     {
-      label: 'Motorcycle',
+      label: 'Motos',
       path: '/motorcycle',
       products: [
         'Generic Motorcycle',
@@ -41,7 +41,7 @@ export default function Categories() {
       ],
     },
     {
-      label: 'Sunglasses',
+      label: 'Óculos',
       path: '/sunglasses',
       products: [
         'Black Sun Glasses',
@@ -52,7 +52,7 @@ export default function Categories() {
       ],
     },
     {
-      label: 'Beauty',
+      label: "Maquiagem",
       path: '/beauty',
       products: [
         'Essence Mascara Lash Princess',
@@ -63,7 +63,7 @@ export default function Categories() {
       ],
     },
     {
-      label: 'MensShoes',
+      label: 'Tênis para Homens',
       path: '/mens-shoes',
       products: [
         'Nike Air Jordan 1 Red And Black',
@@ -74,7 +74,7 @@ export default function Categories() {
       ],
     },
     {
-      label: 'MensShirts',
+      label: 'Camisa para Homens',
       path: '/mens-shirts',
       products: [
         'Blue & Black Check Shirt',
@@ -85,7 +85,7 @@ export default function Categories() {
       ],
     },
     {
-      label: 'Furniture',
+      label: 'Móveis',
       path: '/furniture',
       products: [
         'Annibale Colombo Bed',
@@ -122,7 +122,7 @@ export default function Categories() {
       }}
     >
       <h2 style={{ marginBottom: 30, fontWeight: '900' }}>
-        Categorias Disponíveis⏬
+        Produtos Disponíveis na Loja Física⏬
       </h2>
       {/* Barra de pesquisa */}
       <input

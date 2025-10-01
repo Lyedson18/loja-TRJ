@@ -115,7 +115,7 @@ export default function Login() {
             onClick={handleLogin}
             className="button-link small-btn"
           >
-            Entrar
+            Entrar 🔓
           </button>
 
           <button
@@ -123,7 +123,7 @@ export default function Login() {
             onClick={handleCadastro}
             className="button-link small-btn"
           >
-            Cadastrar
+            Cadastrar 🔒
           </button>
         </div>
       </form>
