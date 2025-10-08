@@ -46,11 +46,16 @@ export default function Login() {
     }
 
     try {
-      // Cria usuário e evita "Email not confirmed"
+      // Cria usuário com admin false por padrão e evita "Email not confirmed"
       const { data, error } = await supabase.auth.signUp({
         email,
         password: senha,
-        options: { emailRedirectTo: window.location.origin }
+        options: { 
+          emailRedirectTo: window.location.origin,
+          data: {
+            admin: false
+          }
+        }
       });
 
       if (error) {

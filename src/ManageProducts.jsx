@@ -1,6 +1,5 @@
 import React from "react";
-import Product2vList from "./Product2vList"; // importa seu componente que puxa do Supabase
-
+import Product2vList from "./Product2vList";
 export default function ManageProducts() {
   return (
     <div style={{ padding: "20px" }}>

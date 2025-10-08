@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from "./utils/supabase";
+
 export default function Home() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+
   useEffect(() => {
     const checkUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -14,6 +16,7 @@ export default function Home() {
       }
     };
     checkUser();
+
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setUser(session.user);
@@ -21,17 +24,19 @@ export default function Home() {
         navigate('/');
       }
     });
+
     return () => {
       listener.subscription.unsubscribe();
     };
   }, [navigate]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/');
   };
+
   return (
     <div className="home" style={{ position: 'relative', minHeight: '100vh' }}>
-      {/**/}
       {user && (
         <div
           style={{
@@ -55,7 +60,10 @@ export default function Home() {
               whiteSpace: 'nowrap',
             }}
           >
-            Conta logada - {user.user_metadata?.name || user.email}
+            {/* Verifica se o usuário é admin */}
+            {user.user_metadata?.admin
+              ? `Conta logada como Administrador - ${user.email}`
+              : `Conta logada - ${user.email}`}
           </div>
           <button
             onClick={handleLogout}
