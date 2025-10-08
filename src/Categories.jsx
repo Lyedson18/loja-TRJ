@@ -1,11 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from './CartContext';
+
 export default function Categories() {
   const navigate = useNavigate();
   const { cartItems } = useContext(CartContext);
   const [searchTerm, setSearchTerm] = useState('');
   const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
   const categories = [
     {
       label: 'Notebooks',
@@ -96,6 +98,7 @@ export default function Categories() {
       ],
     },
   ];
+
   const lowerSearch = searchTerm.toLowerCase();
   const filteredCategories = categories.filter((cat) => {
     const categoryMatch = cat.label.toLowerCase().includes(lowerSearch);
@@ -104,6 +107,7 @@ export default function Categories() {
     );
     return categoryMatch || productMatch;
   });
+
   return (
     <div
       className="products-list"
@@ -121,9 +125,33 @@ export default function Categories() {
         position: 'relative',
       }}
     >
+      {/* Botão voltar para Home */}
+      <div
+        onClick={() => navigate('/home')}
+        style={{
+          position: 'absolute',
+          top: 20,
+          left: 20,
+          background: '#ef4444',
+          color: 'white',
+          padding: '8px 16px',
+          borderRadius: '12px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          boxShadow: '0 0 10px rgba(239, 68, 68, 0.7)',
+          userSelect: 'none',
+          transition: 'all 0.3s ease',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = '#dc2626')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = '#ef4444')}
+      >
+        ⬅ Voltar para Seções
+      </div>
+
       <h2 style={{ marginBottom: 30, fontWeight: '900' }}>
         Produtos Disponíveis na Loja Física⏬
       </h2>
+
       {/* Barra de pesquisa */}
       <input
         type="text"
@@ -139,6 +167,7 @@ export default function Categories() {
           marginBottom: '20px',
         }}
       />
+
       {/* Botão do carrinho */}
       <button
         onClick={() => navigate('/checkout')}
@@ -174,7 +203,8 @@ export default function Categories() {
           </span>
         )}
       </button>
-      {/* Botões filtrados organizados em grid */}
+
+      {/**/}
       {filteredCategories.length > 0 ? (
         <div
           style={{
@@ -226,6 +256,7 @@ export default function Categories() {
     </div>
   );
 }
+
 const buttonStyle = {
   padding: '18px 50px',
   fontWeight: '700',
@@ -240,10 +271,12 @@ const buttonStyle = {
   userSelect: 'none',
   width: '250px',
 };
+
 function hoverIn(e) {
   e.currentTarget.style.background = 'linear-gradient(90deg, #3b82f6, #2563eb)';
   e.currentTarget.style.boxShadow = '0 8px 28px rgba(37, 99, 235, 1)';
 }
+
 function hoverOut(e) {
   e.currentTarget.style.background = 'linear-gradient(90deg, #2563eb, #3b82f6)';
   e.currentTarget.style.boxShadow = '0 6px 20px rgba(37, 99, 235, 0.85)';
