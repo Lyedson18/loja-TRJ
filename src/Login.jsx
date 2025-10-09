@@ -9,6 +9,7 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState("");
+  const [isVendedor, setIsVendedor] = useState(false); // novo estado
 
   // Login para usuários já cadastrados
   const handleLogin = async (e) => {
@@ -46,14 +47,15 @@ export default function Login() {
     }
 
     try {
-      // Cria usuário com admin false por padrão e evita "Email not confirmed"
+      // Cria usuário com admin false e vendedor de acordo com checkbox
       const { data, error } = await supabase.auth.signUp({
         email,
         password: senha,
         options: { 
           emailRedirectTo: window.location.origin,
           data: {
-            admin: false
+            admin: false,
+            vendedor: isVendedor
           }
         }
       });
@@ -113,6 +115,16 @@ export default function Login() {
           onChange={(e) => setSenha(e.target.value)}
           style={{ padding: '12px', borderRadius: '8px', border: '1px solid #2563eb', fontSize: '1rem' }}
         />
+
+        {/* Checkbox para marcar se vai ser vendedor */}
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#cbd5e1', fontWeight: 500 }}>
+          <input
+            type="checkbox"
+            checked={isVendedor}
+            onChange={(e) => setIsVendedor(e.target.checked)}
+          />
+          Cadastrar como vendedor
+        </label>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
           <button

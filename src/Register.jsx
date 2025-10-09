@@ -1,60 +1,44 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import './index.css'; // CSS correto
+import { useState } from "react";
+import { supabase } from "./utils/supabase";
 
 export default function Register() {
-  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [erro, setErro] = useState("");
+  const [sucesso, setSucesso] = useState("");
 
-  const handleCadastro = (e) => {
-    e.preventDefault(); // impede reload da página
-    // Aqui você poderia salvar os dados do usuário antes de navegar
-    navigate('/'); // volta para a página de login
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setErro("");
+    setSucesso("");
+
+    if (!email || !password) {
+      setErro("Preencha todos os campos");
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          admin: false,
+          vendedor: true // ou false dependendo do caso
+        }
+      }
+    });
+
+    if (error) setErro(error.message);
+    else setSucesso("Usuário registrado com sucesso!");
   };
 
   return (
-    <div className="home">
-      <h1 className="highlight">Cadastro de Usuário</h1>
-      <p className="lead">Preencha os campos abaixo para criar sua conta.</p>
-
-      <form
-        onSubmit={handleCadastro}
-        className="form"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-          width: '100%',
-          maxWidth: '360px',
-          marginTop: '20px'
-        }}
-      >
-        <input
-          type="text"
-          placeholder="Nome"
-          required
-          style={{ padding: '12px', borderRadius: '8px', border: '1px solid #2563eb', fontSize: '1rem' }}
-        />
-        <input
-          type="email"
-          placeholder="E-mail"
-          required
-          style={{ padding: '12px', borderRadius: '8px', border: '1px solid #2563eb', fontSize: '1rem' }}
-        />
-        <input
-          type="password"
-          placeholder="Senha"
-          required
-          style={{ padding: '12px', borderRadius: '8px', border: '1px solid #2563eb', fontSize: '1rem' }}
-        />
-
-        <button
-          type="submit"
-          className="button-link small-btn"
-          style={{ alignSelf: 'center', marginTop: '10px' }}
-        >
-          Cadastrar
-        </button>
-      </form>
-    </div>
+    <form onSubmit={handleRegister}>
+      <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
+      <input type="password" placeholder="Senha" value={password} onChange={e => setPassword(e.target.value)} />
+      <button type="submit">Registrar</button>
+      {erro && <p style={{ color: "red" }}>{erro}</p>}
+      {sucesso && <p style={{ color: "green" }}>{sucesso}</p>}
+    </form>
   );
 }

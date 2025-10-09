@@ -35,6 +35,20 @@ export default function Home() {
     navigate('/');
   };
 
+  const getAccountType = () => {
+    if (!user) return '';
+    const meta = user.user_metadata || {};
+    if (meta.admin) return 'Conta logada como Administrador';
+    if (meta.vendedor) return 'Conta logada como Vendedor';
+    return 'Conta logada';
+  };
+
+  const isAdminOrVendedor = () => {
+    if (!user) return false;
+    const meta = user.user_metadata || {};
+    return meta.admin || meta.vendedor;
+  };
+
   return (
     <div className="home" style={{ position: 'relative', minHeight: '100vh' }}>
       {user && (
@@ -60,10 +74,7 @@ export default function Home() {
               whiteSpace: 'nowrap',
             }}
           >
-            {/* Verifica se o usuário é admin */}
-            {user.user_metadata?.admin
-              ? `Conta logada como Administrador - ${user.email}`
-              : `Conta logada - ${user.email}`}
+            {`${getAccountType()} - ${user.email}`}
           </div>
           <button
             onClick={handleLogout}
@@ -95,12 +106,21 @@ export default function Home() {
       <p className="sublead">
         Qualidade, tecnologia e preços incríveis para você!
       </p>
+
+      {/* Botões visíveis para todos */}
       <Link to="/categories" className="button-link">
         Produtos da Loja Física 🛒
       </Link>
-      <Link to="/manage-products" className="button-link">
-        Produtos Loja Online 🛒
+      <Link to="/loja-online" className="button-link">
+        Loja Online 🛒
       </Link>
+
+      {/* Botão apenas para admins e vendedores */}
+      {isAdminOrVendedor() && (
+        <Link to="/add-product" className="button-link">
+          Cadastrar Produtos Loja Online 🛒
+        </Link>
+      )}
     </div>
   );
 }

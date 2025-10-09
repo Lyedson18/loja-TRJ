@@ -1,12 +1,12 @@
 import React from 'react';
-import { supabase } from "./utils/supabase";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { CartProvider } from './CartContext';
+
 import Home from './Home';
 import Categories from './Categories';
 import ProductsList from './ProductsList';
 import ProductDetail from './ProductDetail';
 import Checkout from './Checkout';
-import { CartProvider } from './CartContext';
 import Fragrances from './Fragrances';
 import FragrancesDetail from './FragrancesDetail';
 import MensShirts from './MensShirts';
@@ -23,69 +23,51 @@ import MensShoes from './MensShoes';
 import MensShoesDetail from './MensShoesDetail';
 import Login from './Login';
 import Register from './Register';
-import ManageProducts from './ManageProducts';
-import Product2vList from './Product2vList';
+
+// NOVAS PÁGINAS
+import LojaOnline from './LojaOnline'; // exibe e permite deletar produtos
+import AddProduct from './AddProduct'; // página de cadastro só para admins e vendedores
 
 function App() {
   return (
     <CartProvider>
       <Router>
-        <div>
-          <Routes>
-            {/* Login */}
-            <Route path="/" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/home" element={<Home />} />
 
-            {/* Home */}
-            <Route path="/home" element={<Home />} />
+          {/* Loja Online */}
+          <Route path="/loja-online" element={<LojaOnline />} />
 
-            {/* Manage Products */}
-            <Route path="/manage-products" element={<ManageProducts />} />
+          {/* Cadastro de produtos (só admin/vendedor) */}
+          <Route path="/add-product" element={<AddProduct />} />
 
-            {/* Categories */}
-            <Route path="/categories" element={<Categories />} />
+          {/* Categorias e produtos existentes */}
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/shop" element={<ProductsList />} />
+          <Route path="/product/:productId" element={<ProductDetail />} />
+          <Route path="/checkout" element={<Checkout />} />
 
-            {/* Laptops */}
-            <Route path="/shop" element={<ProductsList />} />
-            <Route path="/product/:productId" element={<ProductDetail />} />
-
-            {/* Checkout */}
-            <Route path="/checkout" element={<Checkout />} />
-
-            {/* Fragrances */}
-            <Route path="/fragrances" element={<Fragrances />} />
-            <Route path="/fragrances/product/:productId" element={<FragrancesDetail />} />
-
-            {/* MensShirts */}
-            <Route path="/mens-shirts" element={<MensShirts />} />
-            <Route path="/mens-shirts/product/:productId" element={<MensShirtsDetail />} />
-
-            {/* Motorcycle */}
-            <Route path="/motorcycle" element={<Motorcycle />} />
-            <Route path="/motorcycle/product/:productId" element={<ProductDetailMotorcycle />} />
-
-            {/* Sunglasses */}
-            <Route path="/sunglasses" element={<Sunglasses />} />
-            <Route path="/sunglasses/product/:productId" element={<SunglassesDetail />} />
-
-            {/* Beauty */}
-            <Route path="/beauty" element={<Beauty />} />
-            <Route path="/beauty/product/:productId" element={<BeautyDetail />} />
-
-            {/* Furniture */}
-            <Route path="/furniture" element={<Furniture />} />
-            <Route path="/furniture/product/:productId" element={<FurnitureDetail />} />
-
-            {/* MensShoes */}
-            <Route path="/mens-shoes" element={<MensShoes />} />
-            <Route path="/mens-shoes/product/:productId" element={<MensShoesDetail />} />
-
-            {/* Nova rota para product_2v */}
-            <Route path="/product-2v" element={<Product2vList />} />
-          </Routes>
-        </div>
+          {/* Outras categorias */}
+          <Route path="/fragrances" element={<Fragrances />} />
+          <Route path="/fragrances/product/:productId" element={<FragrancesDetail />} />
+          <Route path="/mens-shirts" element={<MensShirts />} />
+          <Route path="/mens-shirts/product/:productId" element={<MensShirtsDetail />} />
+          <Route path="/motorcycle" element={<Motorcycle />} />
+          <Route path="/motorcycle/product/:productId" element={<ProductDetailMotorcycle />} />
+          <Route path="/sunglasses" element={<Sunglasses />} />
+          <Route path="/sunglasses/product/:productId" element={<SunglassesDetail />} />
+          <Route path="/beauty" element={<Beauty />} />
+          <Route path="/beauty/product/:productId" element={<BeautyDetail />} />
+          <Route path="/furniture" element={<Furniture />} />
+          <Route path="/furniture/product/:productId" element={<FurnitureDetail />} />
+          <Route path="/mens-shoes" element={<MensShoes />} />
+          <Route path="/mens-shoes/product/:productId" element={<MensShoesDetail />} />
+        </Routes>
       </Router>
     </CartProvider>
   );
 }
+
 export default App;

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { CartContext } from './CartContext';
 import { useNavigate } from 'react-router-dom';
+
 export default function Checkout() {
   const { cartItems, clearCart, setCartItems } = useContext(CartContext);
   const navigate = useNavigate();
@@ -14,40 +15,55 @@ export default function Checkout() {
     parcelas: '1',
     frete: 'normal',
   });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCustomerData(prev => ({ ...prev, [name]: value }));
   };
+
   const handleIncrease = (id) => {
     const newCart = cartItems.map(item =>
       item.id === id ? { ...item, quantity: item.quantity + 1 } : item
     );
     setCartItems(newCart);
   };
+
+  // ✅ Agora remove o item do carrinho se a quantidade chegar a 0
   const handleDecrease = (id) => {
-    const newCart = cartItems.map(item =>
-      item.id === id && item.quantity > 1
-        ? { ...item, quantity: item.quantity - 1 }
-        : item
-    );
+    const newCart = cartItems
+      .map(item =>
+        item.id === id
+          ? { ...item, quantity: item.quantity - 1 }
+          : item
+      )
+      .filter(item => item.quantity > 0);
     setCartItems(newCart);
   };
+
   const fretePreco = customerData.frete === 'economico' ? 10
                    : customerData.frete === 'normal' ? 20
                    : customerData.frete === 'expresso' ? 50
                    : customerData.frete === 'ultra' ? 100
                    : 0;
+
   const totalProdutos = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const totalFinal = totalProdutos + fretePreco;
+
   const handleFinalizar = () => {
     const valorParcela = (totalFinal / parseInt(customerData.parcelas)).toFixed(2);
     alert(`Compra finalizada!\nTotal a pagar: R$ ${totalFinal.toFixed(2)}\nParcelado em: ${customerData.parcelas}x de R$ ${valorParcela}`);
     clearCart();
     navigate('/');
   };
+
   const handleVoltarLoja = () => {
     navigate('/categories');
   };
+
+  const handleVoltarLojaOnline = () => {
+    navigate('/loja-online');
+  };
+
   return (
     <div
       style={{
@@ -63,6 +79,8 @@ export default function Checkout() {
       <h2 style={{ marginBottom: 20, fontSize: '1.8rem', fontWeight: 700, textAlign: 'center' }}>
         Confirmação de Dados e Pagamento
       </h2>
+
+      {/* Dados do cliente */}
       <section style={{ marginBottom: 30 }}>
         <h3 style={{ marginBottom: 10 }}>Dados do Cliente</h3>
         <form>
@@ -88,6 +106,8 @@ export default function Checkout() {
           ))}
         </form>
       </section>
+
+      {/* Frete */}
       <section style={{ marginBottom: 30 }}>
         <h3 style={{ marginBottom: 10 }}>Frete</h3>
         {[  
@@ -108,6 +128,8 @@ export default function Checkout() {
           </label>
         ))}
       </section>
+
+      {/* Forma de pagamento */}
       <section style={{ marginBottom: 30 }}>
         <h3 style={{ marginBottom: 10 }}>Forma de Pagamento</h3>
         {['cartao', 'boleto', 'pix'].map(metodo => (
@@ -152,6 +174,8 @@ export default function Checkout() {
           </label>
         )}
       </section>
+
+      {/* Resumo do pedido */}
       <section style={{ marginBottom: 30 }}>
         <h3 style={{ marginBottom: 10 }}>Resumo do Pedido</h3>
         {cartItems.length === 0 ? (
@@ -209,6 +233,8 @@ export default function Checkout() {
           </div>
         </div>
       </section>
+
+      {/* Botões */}
       <button
         onClick={handleFinalizar}
         disabled={cartItems.length === 0}
@@ -228,6 +254,7 @@ export default function Checkout() {
       >
         Finalizar Compra(s)!
       </button>
+
       <button
         onClick={handleVoltarLoja}
         style={{
@@ -243,7 +270,25 @@ export default function Checkout() {
           width: '100%'
         }}
       >
-        Voltar para Categorias!
+        Voltar para Loja Fisica!
+      </button>
+
+      <button
+        onClick={handleVoltarLojaOnline}
+        style={{
+          marginTop: 15,
+          padding: '15px 40px',
+          fontSize: '1.2rem',
+          fontWeight: 700,
+          borderRadius: 12,
+          background: '#3b82f6',
+          color: 'white',
+          border: 'none',
+          cursor: 'pointer',
+          width: '100%'
+        }}
+      >
+        Voltar para Loja Online!
       </button>
     </div>
   );
