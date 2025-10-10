@@ -21,7 +21,10 @@ export default function LojaOnline() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const { data, error } = await supabase.from("product_2v").select("*").order("created_at", { ascending: false });
+      const { data, error } = await supabase
+        .from("product_2v")
+        .select("*")
+        .order("created_at", { ascending: false });
       if (error) setErro("Erro ao buscar produtos");
       else setProducts(data);
     };
@@ -40,9 +43,13 @@ export default function LojaOnline() {
   const handleAddToCart = (product) => {
     const itemExists = cartItems.find((item) => item.id === product.id);
     if (itemExists) {
-      setCartItems(cartItems.map((item) =>
-        item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-      ));
+      setCartItems(
+        cartItems.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        )
+      );
     } else {
       setCartItems([...cartItems, { ...product, quantity: 1 }]);
     }
@@ -51,19 +58,38 @@ export default function LojaOnline() {
   };
 
   return (
-    <div style={{ padding: "40px", color: "#cbd5e1", maxWidth: "800px", margin: "0 auto" }}>
+    <div
+      style={{
+        padding: "40px",
+        color: "#cbd5e1",
+        maxWidth: "800px",
+        margin: "0 auto",
+      }}
+    >
       <h1>Loja Online</h1>
 
       <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
         <button
           onClick={() => navigate("/home")}
-          style={{ padding: "8px 12px", background: "#6b7280", color: "#fff", border: "none", borderRadius: "5px" }}
+          style={{
+            padding: "8px 12px",
+            background: "#6b7280",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+          }}
         >
           Voltar para Home
         </button>
         <button
           onClick={() => navigate("/checkout")}
-          style={{ padding: "8px 12px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: "5px" }}
+          style={{
+            padding: "8px 12px",
+            background: "#3b82f6",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+          }}
         >
           🛒 ({cartItems.length})
         </button>
@@ -74,27 +100,58 @@ export default function LojaOnline() {
 
       <ul style={{ listStyle: "none", padding: 0 }}>
         {products.map((p) => (
-          <li key={p.id} style={{ marginBottom: "30px", borderBottom: "1px solid #3b82f6", paddingBottom: "15px" }}>
+          <li
+            key={p.id}
+            style={{
+              marginBottom: "30px",
+              borderBottom: "1px solid #3b82f6",
+              paddingBottom: "15px",
+            }}
+          >
             <div style={{ display: "flex", gap: "15px" }}>
-              <img src={p.thumbnail} alt={p.title} style={{ width: "180px", height: "120px", objectFit: "contain" }} />
+              <img
+                src={p.thumbnail}
+                alt={p.title}
+                style={{ width: "180px", height: "120px", objectFit: "contain" }}
+              />
               <div>
                 <h2>{p.title}</h2>
                 <p>{p.description}</p>
                 <p>Preço: ${p.price}</p>
-                {user && (user.user_metadata?.admin || p.user_id === user.id) && (
+
+                {user && (
                   <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-                    <button
-                      onClick={() => handleDelete(p.id)}
-                      style={{ padding: "6px 10px", background: "#dc2626", color: "#fff", border: "none", borderRadius: "5px" }}
-                    >
-                      Deletar
-                    </button>
-                    <button
-                      onClick={() => handleAddToCart(p)}
-                      style={{ padding: "6px 10px", background: "#16a34a", color: "#fff", border: "none", borderRadius: "5px" }}
-                    >
-                      Adicionar ao Carrinho
-                    </button>
+                    {/* Botão Deletar: apenas admin ou vendedor dono do produto */}
+                    {(user.user_metadata?.admin || p.user_id === user.id) && (
+                      <button
+                        onClick={() => handleDelete(p.id)}
+                        style={{
+                          padding: "6px 10px",
+                          background: "#dc2626",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: "5px",
+                        }}
+                      >
+                        Deletar
+                      </button>
+                    )}
+
+                    {/* Botão Adicionar ao Carrinho: apenas admin ou usuário comum */}
+                    {(!user.user_metadata?.vendedor) && (
+                      <button
+                        onClick={() => handleAddToCart(p)}
+                        style={{
+                          padding: "6px 10px",
+                          background: "#16a34a",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: "5px",
+                        }}
+                      >
+                        Adicionar ao Carrinho
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

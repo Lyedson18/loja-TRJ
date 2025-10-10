@@ -7,7 +7,7 @@ export default function Checkout() {
   const navigate = useNavigate();
   const [customerData, setCustomerData] = useState({
     nome: '',
-    endereco: '',
+    Rua: '',
     cidade: '',
     estado: '',
     cep: '',
@@ -84,7 +84,7 @@ export default function Checkout() {
       <section style={{ marginBottom: 30 }}>
         <h3 style={{ marginBottom: 10 }}>Dados do Cliente</h3>
         <form>
-          {['nome', 'endereco', 'cidade', 'estado', 'cep'].map(field => (
+          {['nome', 'Rua', 'cidade', 'estado', 'cep'].map(field => (
             <label key={field} style={{ display: 'block', marginBottom: 12 }}>
               {field.charAt(0).toUpperCase() + field.slice(1)}:
               <input
