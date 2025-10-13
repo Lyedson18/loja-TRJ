@@ -148,8 +148,31 @@ export default function Categories() {
         ⬅ Voltar para Seções
       </div>
 
+      {/* Botão Loja Online - NOVO */}
+      <div
+        onClick={() => navigate('/loja-online')}
+        style={{
+          position: 'absolute',
+          top: 60, // Colocado 40px abaixo do botão Home
+          left: 20,
+          background: '#10b981',
+          color: 'white',
+          padding: '8px 16px',
+          borderRadius: '12px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          boxShadow: '0 0 10px rgba(16, 185, 129, 0.7)',
+          userSelect: 'none',
+          transition: 'all 0.3s ease',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = '#059669')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = '#10b981')}
+      >
+        🛒 Loja Online
+      </div>
+
       <h2 style={{ marginBottom: 30, fontWeight: '900' }}>
-        Produtos Disponíveis na Loja Física⏬
+        Produtos Disponíveis ⏬
       </h2>
 
       {/* Barra de pesquisa */}

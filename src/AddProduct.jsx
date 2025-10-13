@@ -16,7 +16,7 @@ export default function AddProduct() {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (data?.user) setUser(data.user);
-      else navigate("/"); // redireciona se não logado
+      else navigate("/");
     };
     fetchUser();
   }, [navigate]);
@@ -53,26 +53,176 @@ export default function AddProduct() {
   };
 
   return (
-    <div style={{ padding: "40px", maxWidth: "600px", margin: "0 auto" }}>
-      <h1>Adicionar Produto</h1>
+    <div className="product-detail" style={{ maxWidth: '600px', margin: '40px auto' }}>
+      <h2 style={{ textAlign: 'center', color: '#cbd5e1', marginBottom: '30px' }}>
+        Cadastrar Novo Produto
+      </h2>
 
-      {erro && <p style={{ color: "red" }}>{erro}</p>}
-      {sucesso && <p style={{ color: "green" }}>{sucesso}</p>}
+      {/* Botões de Navegação */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
+        <button
+          onClick={() => navigate('/home')}
+          className="button-link"
+          style={{ padding: '12px 25px', fontSize: '1rem' }}
+        >
+          Voltar para Home
+        </button>
+        <button
+          onClick={() => navigate('/loja-online')}
+          className="button-link"
+          style={{ padding: '12px 25px', fontSize: '1rem', backgroundColor: '#3b82f6' }}
+        >
+          Ver na Loja Online
+        </button>
+      </div>
 
-      <form onSubmit={handleAddProduct} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-        <input type="text" placeholder="Título" value={title} onChange={(e) => setTitle(e.target.value)} />
-        <input type="text" placeholder="Descrição" value={description} onChange={(e) => setDescription(e.target.value)} />
-        <input type="number" step="0.01" placeholder="Preço" value={price} onChange={(e) => setPrice(e.target.value)} />
-        <input type="text" placeholder="URL da Imagem" value={thumbnail} onChange={(e) => setThumbnail(e.target.value)} />
-        <div style={{ display: "flex", gap: "10px" }}>
-          <button type="submit" style={{ padding: "10px 15px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: "5px" }}>
-            Adicionar Produto
-          </button>
-          <button type="button" onClick={() => navigate("/home")} style={{ padding: "10px 15px", background: "#6b7280", color: "#fff", border: "none", borderRadius: "5px" }}>
-            Voltar para Home
-          </button>
+      {erro && (
+        <div style={{
+          color: 'red',
+          textAlign: 'center',
+          marginBottom: '20px',
+          padding: '10px',
+          background: 'rgba(220, 38, 38, 0.1)',
+          borderRadius: '8px'
+        }}>
+          {erro}
         </div>
+      )}
+      
+      {sucesso && (
+        <div style={{
+          color: 'green',
+          textAlign: 'center',
+          marginBottom: '20px',
+          padding: '10px',
+          background: 'rgba(34, 197, 94, 0.1)',
+          borderRadius: '8px'
+        }}>
+          {sucesso}
+        </div>
+      )}
+
+      <form onSubmit={handleAddProduct} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div>
+          <label style={{ color: '#cbd5e1', marginBottom: '8px', display: 'block', fontWeight: '600' }}>
+            Título do Produto:
+          </label>
+          <input
+            type="text"
+            placeholder="Digite o título do produto"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '12px',
+              borderRadius: '8px',
+              border: '1px solid #334155',
+              background: '#0f172a',
+              color: '#cbd5e1',
+              fontSize: '1rem'
+            }}
+          />
+        </div>
+
+        <div>
+          <label style={{ color: '#cbd5e1', marginBottom: '8px', display: 'block', fontWeight: '600' }}>
+            Descrição:
+          </label>
+          <textarea
+            placeholder="Digite a descrição do produto"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows="4"
+            style={{
+              width: '100%',
+              padding: '12px',
+              borderRadius: '8px',
+              border: '1px solid #334155',
+              background: '#0f172a',
+              color: '#cbd5e1',
+              fontSize: '1rem',
+              resize: 'vertical'
+            }}
+          />
+        </div>
+
+        <div>
+          <label style={{ color: '#cbd5e1', marginBottom: '8px', display: 'block', fontWeight: '600' }}>
+            Preço (USD):
+          </label>
+          <input
+            type="number"
+            step="0.01"
+            placeholder="0.00"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '12px',
+              borderRadius: '8px',
+              border: '1px solid #334155',
+              background: '#0f172a',
+              color: '#cbd5e1',
+              fontSize: '1rem'
+            }}
+          />
+        </div>
+
+        <div>
+          <label style={{ color: '#cbd5e1', marginBottom: '8px', display: 'block', fontWeight: '600' }}>
+            URL da Imagem:
+          </label>
+          <input
+            type="text"
+            placeholder="https://exemplo.com/imagem.jpg"
+            value={thumbnail}
+            onChange={(e) => setThumbnail(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '12px',
+              borderRadius: '8px',
+              border: '1px solid #334155',
+              background: '#0f172a',
+              color: '#cbd5e1',
+              fontSize: '1rem'
+            }}
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="button-link"
+          style={{
+            padding: '15px 40px',
+            fontSize: '1.2rem',
+            fontWeight: '700',
+            marginTop: '20px',
+            width: '100%'
+          }}
+        >
+          Cadastrar Produto
+        </button>
       </form>
+
+      {/* Preview da Imagem */}
+      {thumbnail && (
+        <div style={{ marginTop: '30px', textAlign: 'center' }}>
+          <h3 style={{ color: '#cbd5e1', marginBottom: '15px' }}>Preview da Imagem:</h3>
+          <img
+            src={thumbnail}
+            alt="Preview"
+            style={{
+              maxWidth: '100%',
+              maxHeight: '200px',
+              borderRadius: '8px',
+              border: '2px solid #334155'
+            }}
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }

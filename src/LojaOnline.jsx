@@ -10,6 +10,7 @@ export default function LojaOnline() {
   const [user, setUser] = useState(null);
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -57,108 +58,209 @@ export default function LojaOnline() {
     setTimeout(() => setSucesso(""), 2000);
   };
 
-  return (
-    <div
-      style={{
-        padding: "40px",
-        color: "#cbd5e1",
-        maxWidth: "800px",
-        margin: "0 auto",
-      }}
-    >
-      <h1>Loja Online</h1>
+  const filteredProducts = products.filter(prod =>
+    prod.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    prod.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-        <button
-          onClick={() => navigate("/home")}
+  return (
+    <div className="products-list" style={{ position: 'relative', minHeight: '100vh', paddingTop: '40px' }}>
+      {/* Botão do Carrinho */}
+      <button
+        onClick={() => navigate('/checkout')}
+        style={{
+          position: 'absolute',
+          top: '20px',
+          right: '20px',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          color: '#3b82f6',
+          fontSize: '2.4rem',
+          userSelect: 'none',
+        }}
+        aria-label="Ir para checkout"
+      >
+        🛒
+        {cartItems.length > 0 && (
+          <span
+            style={{
+              position: 'absolute',
+              top: '-10px',
+              right: '-12px',
+              background: 'red',
+              color: 'white',
+              borderRadius: '50%',
+              padding: '3px 8px',
+              fontSize: '0.8rem',
+              fontWeight: 'bold',
+            }}
+          >
+            {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
+          </span>
+        )}
+      </button>
+
+      <h2 style={{ textAlign: 'center', color: '#cbd5e1', marginBottom: '30px', fontWeight: '900' }}>
+        Loja Online 🛒
+      </h2>
+
+      {/* BARRA DE PESQUISA CENTRALIZADA */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder="Pesquisar produto na loja online..."
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
           style={{
-            padding: "8px 12px",
-            background: "#6b7280",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
+            width: '100%',
+            maxWidth: '400px',
+            padding: '12px 20px',
+            fontSize: '16px',
+            borderRadius: '10px',
+            border: 'none',
+            background: '#0f172a',
+            color: '#cbd5e1',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
+            textAlign: 'center'
           }}
+        />
+      </div>
+
+      {/* Botões de Navegação */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
+        <button
+          onClick={() => navigate('/home')}
+          className="button-link"
+          style={{ padding: '12px 25px', fontSize: '1rem' }}
         >
           Voltar para Home
         </button>
         <button
-          onClick={() => navigate("/checkout")}
-          style={{
-            padding: "8px 12px",
-            background: "#3b82f6",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-          }}
+          onClick={() => navigate('/categories')}
+          className="button-link"
+          style={{ padding: '12px 25px', fontSize: '1rem', backgroundColor: '#3b82f6' }}
         >
-          🛒 ({cartItems.length})
+          Loja Física
         </button>
       </div>
 
-      {erro && <p style={{ color: "red" }}>{erro}</p>}
-      {sucesso && <p style={{ color: "green" }}>{sucesso}</p>}
+      {erro && (
+        <div style={{
+          color: 'red',
+          textAlign: 'center',
+          marginBottom: '20px',
+          padding: '10px',
+          background: 'rgba(220, 38, 38, 0.1)',
+          borderRadius: '8px'
+        }}>
+          {erro}
+        </div>
+      )}
+      
+      {sucesso && (
+        <div style={{
+          color: 'green',
+          textAlign: 'center',
+          marginBottom: '20px',
+          padding: '10px',
+          background: 'rgba(34, 197, 94, 0.1)',
+          borderRadius: '8px'
+        }}>
+          {sucesso}
+        </div>
+      )}
 
-      <ul style={{ listStyle: "none", padding: 0 }}>
-        {products.map((p) => (
-          <li
-            key={p.id}
-            style={{
-              marginBottom: "30px",
-              borderBottom: "1px solid #3b82f6",
-              paddingBottom: "15px",
-            }}
-          >
-            <div style={{ display: "flex", gap: "15px" }}>
+      {/* Lista de Produtos */}
+      <ul className="products-ul">
+        {filteredProducts.map((p) => (
+          <li key={p.id} className="product-item">
+            <div className="product-link">
               <img
                 src={p.thumbnail}
                 alt={p.title}
-                style={{ width: "180px", height: "120px", objectFit: "contain" }}
+                className="product-image"
               />
-              <div>
-                <h2>{p.title}</h2>
-                <p>{p.description}</p>
-                <p>Preço: ${p.price}</p>
+              <div className="product-info">{p.title}</div>
+              <div className="product-price">${p.price}</div>
+              <p style={{ 
+                color: '#94a3b8', 
+                fontSize: '0.9rem', 
+                margin: '8px 0',
+                textAlign: 'center'
+              }}>
+                {p.description}
+              </p>
 
-                {user && (
-                  <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-                    {/* Botão Deletar: apenas admin ou vendedor dono do produto */}
-                    {(user.user_metadata?.admin || p.user_id === user.id) && (
-                      <button
-                        onClick={() => handleDelete(p.id)}
-                        style={{
-                          padding: "6px 10px",
-                          background: "#dc2626",
-                          color: "#fff",
-                          border: "none",
-                          borderRadius: "5px",
-                        }}
-                      >
-                        Deletar
-                      </button>
-                    )}
+              {user && (
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '15px' }}>
+                  {(user.user_metadata?.admin || p.user_id === user.id) && (
+                    <button
+                      onClick={() => handleDelete(p.id)}
+                      style={{
+                        padding: '8px 16px',
+                        background: '#dc2626',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.background = '#b91c1c'}
+                      onMouseOut={(e) => e.currentTarget.style.background = '#dc2626'}
+                    >
+                      Deletar
+                    </button>
+                  )}
 
-                    {/* Botão Adicionar ao Carrinho: apenas admin ou usuário comum */}
-                    {(!user.user_metadata?.vendedor) && (
-                      <button
-                        onClick={() => handleAddToCart(p)}
-                        style={{
-                          padding: "6px 10px",
-                          background: "#16a34a",
-                          color: "#fff",
-                          border: "none",
-                          borderRadius: "5px",
-                        }}
-                      >
-                        Adicionar ao Carrinho
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
+                  {(!user.user_metadata?.vendedor) && (
+                    <button
+                      onClick={() => handleAddToCart(p)}
+                      style={{
+                        padding: '8px 16px',
+                        background: '#16a34a',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.background = '#15803d'}
+                      onMouseOut={(e) => e.currentTarget.style.background = '#16a34a'}
+                    >
+                      Adicionar ao Carrinho
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </li>
         ))}
       </ul>
+
+      {products.length === 0 && (
+        <div style={{ 
+          textAlign: 'center', 
+          color: '#94a3b8', 
+          marginTop: '50px',
+          fontSize: '1.1rem'
+        }}>
+          Nenhum produto cadastrado na loja online.
+        </div>
+      )}
+
+      {products.length > 0 && filteredProducts.length === 0 && (
+        <div style={{ 
+          textAlign: 'center', 
+          color: '#94a3b8', 
+          marginTop: '50px',
+          fontSize: '1.1rem'
+        }}>
+          Nenhum produto encontrado para "{searchTerm}".
+        </div>
+      )}
     </div>
   );
 }
