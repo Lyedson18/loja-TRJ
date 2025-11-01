@@ -30,23 +30,31 @@ export default function Home() {
     };
   }, [navigate]);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
-  };
-
   const getAccountType = () => {
     if (!user) return '';
     const meta = user.user_metadata || {};
-    if (meta.admin) return 'Conta logada como Administrador';
-    if (meta.vendedor) return 'Conta logada como Vendedor';
-    return 'Conta logada';
+    if (meta.admin) return 'Administrador';
+    if (meta.vendedor) return 'Vendedor';
+    return 'Cliente';
   };
 
   const isAdminOrVendedor = () => {
     if (!user) return false;
     const meta = user.user_metadata || {};
     return meta.admin || meta.vendedor;
+  };
+
+  const isAdmin = () => {
+    if (!user) return false;
+    const meta = user.user_metadata || {};
+    return meta.admin;
+  };
+
+  const podeComprar = () => {
+    if (!user) return false;
+    const meta = user.user_metadata || {};
+    // Só clientes normais podem comprar (não admin, não vendedor)
+    return !meta.admin && !meta.vendedor;
   };
 
   return (
@@ -62,63 +70,99 @@ export default function Home() {
             gap: '8px',
           }}
         >
-          <div
+          <button
+            onClick={() => navigate('/minha-conta')}
             style={{
               background: '#16a34a',
               color: 'white',
-              padding: '6px 14px',
+              padding: '10px 20px',
               borderRadius: '20px',
-              fontSize: '0.9rem',
-              fontWeight: '500',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {`${getAccountType()} - ${user.email}`}
-          </div>
-          <button
-            onClick={handleLogout}
-            style={{
-              background: '#dc2626',
-              color: 'white',
+              fontSize: '1rem',
+              fontWeight: '600',
               border: 'none',
-              padding: '6px 12px',
-              borderRadius: '20px',
-              fontSize: '0.9rem',
-              fontWeight: '500',
               cursor: 'pointer',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-              transition: 'background 0.2s ease-in-out',
+              boxShadow: '0 4px 12px rgba(22, 163, 74, 0.4)',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              minWidth: '200px',
+              justifyContent: 'center'
             }}
-            onMouseOver={(e) => (e.currentTarget.style.background = '#b91c1c')}
-            onMouseOut={(e) => (e.currentTarget.style.background = '#dc2626')}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = '#15803d';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = '#16a34a';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+            title="Clique para ver detalhes da conta"
           >
-            Trocar de Conta
+            <span>🙎‍♂️</span>
+            <span style={{ whiteSpace: 'nowrap' }}>
+              {getAccountType()} - {user.email}
+            </span>
           </button>
         </div>
       )}
       <h1>
-        Bem-vindo ao <span className="highlight">(TRJ) Shopping!)</span>
+        Bem-vindo ao <span className="highlight">(TRJ) Shop!</span>
       </h1>
       <p className="lead">
         Encontre os melhores produtos para todas as suas necessidades!
       </p>
       <p className="sublead">
-        Qualidade, tecnologia e preços incríveis para você!
+        Qualidade, tecnologia e preços incríveis para você Consumidor!
       </p>
 
-      {/* Botões visíveis para todos */}
+      {/* LOJA FÍSICA E ONLINE - TODOS PODEM VER (MENOS COMPRAR SE FOR VENDEDOR/ADMIN) */}
       <Link to="/categories" className="button-link">
-        Produtos da Loja Física 🛒
+        Loja Física 🛒
       </Link>
       <Link to="/loja-online" className="button-link">
         Loja Online 🛒
       </Link>
 
-      {/* Botão apenas para admins e vendedores */}
+      {/* MENSAGEM PARA VENDEDORES E ADMINS SOBRE COMPRAS */}
+      {!podeComprar() && user && (
+        <div style={{
+          background: '#1e293b',
+          padding: '20px',
+          borderRadius: '12px',
+          textAlign: 'center',
+          border: '2px solid #334155',
+          marginBottom: '15px',
+          maxWidth: '500px',
+          margin: '0 auto 15px auto'
+        }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>
+            {user.user_metadata?.admin ? '👑' : '📊'}
+          </div>
+          <p style={{ color: '#94a3b8', lineHeight: '1.5', fontSize: '0.9rem' }}>
+            {user.user_metadata?.admin 
+              ? 'Como administrador, você pode visualizar as lojas mas não realizar compras.' 
+              : 'Como vendedor, você pode visualizar as lojas mas não realizar compras no Online!.'
+            }
+          </p>
+        </div>
+      )}
+    
+      {/* CADASTRAR PRODUTOS - PARA ADMINS E VENDEDORES */}
       {isAdminOrVendedor() && (
         <Link to="/add-product" className="button-link">
-          Cadastrar Produtos Loja Online 🛒
+          Cadastrar Novos Produtos na Loja Online! 🛒
+        </Link>
+      )}
+
+      {/* RELATÓRIO DE VENDAS - APENAS PARA ADMINS */}
+      {isAdmin() && (
+        <Link to="/admin-vendas" className="button-link" style={{
+          background: 'linear-gradient(135deg, #10b981, #059669)',
+          color: 'white',
+          border: 'none'
+        }}>
+          💰 Relatório de Vendas (Admin)
         </Link>
       )}
     </div>

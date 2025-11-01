@@ -23,10 +23,12 @@ import MensShoes from './MensShoes';
 import MensShoesDetail from './MensShoesDetail';
 import Login from './Login';
 import Register from './Register';
+import AdminVendas from './AdminVendas';
 
 // NOVAS PÁGINAS
-import LojaOnline from './LojaOnline'; // exibe e permite deletar produtos
-import AddProduct from './AddProduct'; // página de cadastro só para admins e vendedores
+import LojaOnline from './LojaOnline';
+import AddProduct from './AddProduct';
+import UserLogado from './UserLogado';
 
 function App() {
   return (
@@ -36,12 +38,14 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/minha-conta" element={<UserLogado />} />
 
           {/* Loja Online */}
           <Route path="/loja-online" element={<LojaOnline />} />
 
           {/* Cadastro de produtos (só admin/vendedor) */}
           <Route path="/add-product" element={<AddProduct />} />
+          <Route path="/admin-vendas" element={<AdminVendas />} />
 
           {/* Categorias e produtos existentes */}
           <Route path="/categories" element={<Categories />} />

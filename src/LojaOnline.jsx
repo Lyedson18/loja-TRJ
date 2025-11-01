@@ -134,7 +134,7 @@ export default function LojaOnline() {
           className="button-link"
           style={{ padding: '12px 25px', fontSize: '1rem' }}
         >
-          Voltar para Home
+          Voltar para Página Inicial
         </button>
         <button
           onClick={() => navigate('/categories')}

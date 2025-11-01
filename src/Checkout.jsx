@@ -1,6 +1,7 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { CartContext } from './CartContext';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from "./utils/supabase";
 import pixQRCode from './pix.jpeg';
 
 export default function Checkout() {
@@ -16,6 +17,9 @@ export default function Checkout() {
     parcelas: '1',
     frete: 'normal',
   });
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
+  const [countdown, setCountdown] = useState(10);
+  const [redirecting, setRedirecting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,17 +53,66 @@ export default function Checkout() {
   const totalProdutos = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const totalFinal = totalProdutos + fretePreco;
 
+  // Efeito para o redirecionamento automático
+  useEffect(() => {
+    if (paymentConfirmed && countdown > 0 && !redirecting) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else if (paymentConfirmed && countdown === 0 && !redirecting) {
+      setRedirecting(true);
+      clearCart();
+      navigate('/home');
+    }
+  }, [paymentConfirmed, countdown, redirecting, clearCart, navigate]);
+
+  // FUNÇÃO PARA SALVAR VENDA NO SUPABASE
+  const salvarVendaNoBanco = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      const vendaData = {
+        user_id: user?.id,
+        user_email: user?.email || 'guest',
+        produtos: cartItems,
+        total: totalFinal,
+        forma_pagamento: customerData.formaPagamento,
+        frete: customerData.frete,
+        endereco_entrega: {
+          nome: customerData.nome,
+          rua: customerData.Rua,
+          cidade: customerData.cidade,
+          estado: customerData.estado,
+          cep: customerData.cep
+        }
+      };
+
+      const { error } = await supabase
+        .from('vendas')
+        .insert(vendaData);
+
+      if (error) {
+        console.error('Erro ao salvar venda:', error);
+      } else {
+        console.log('✅ Venda salva no banco com sucesso!');
+      }
+    } catch (error) {
+      console.error('Erro ao salvar venda:', error);
+    }
+  };
+
   const gerarDadosPix = () => {
-    const chavePix = "123.456.789-00";
-    const nomeBeneficiario = "SEU NOME COMPLETO AQUI";
-    const cidadeBeneficiario = "SUA CIDADE AQUI";
+    const chavePix = "(84)986204846";
+    const nomeBeneficiario = "Lyedson Matheus dos Santos Silva";
+    const cidadeBeneficiario = "Macau";
     
     return {
       chavePix,
       nomeBeneficiario,
       cidadeBeneficiario,
       valor: totalFinal.toFixed(2),
-      transacaoId: `TRJ${Date.now()}`,
+      transacaoId: `LEE${Date.now()}`,
     };
   };
 
@@ -76,21 +129,33 @@ export default function Checkout() {
       vencimento: vencimento.toLocaleDateString('pt-BR'),
       valor: totalFinal.toFixed(2),
       numero: `001${Date.now().toString().slice(-9)}`,
-      beneficiario: "SEU NOME/EMPRESA AQUI",
-      documento: "SEU CPF/CNPJ AQUI"
+      beneficiario: "Lyedson Matheus dos Santos Silva",
+      documento: "09231023454"
     };
   };
 
-  const handleFinalizar = () => {
+  const handleFinalizar = async () => {
     if (customerData.formaPagamento === 'pix') {
       alert(`📱 Pagamento via PIX\n\n💳 Valor: R$ ${totalFinal.toFixed(2)}\n\nEscaneie o QR Code acima para pagar!\n\nApós o pagamento, seu pedido será processado.`);
+      // Para PIX, vamos simular a confirmação após 2 segundos
+      setTimeout(async () => {
+        await salvarVendaNoBanco();
+        setPaymentConfirmed(true);
+        alert('✅ Pagamento PIX confirmado! Redirecionando para a página inicial...');
+      }, 2000);
     } else if (customerData.formaPagamento === 'boleto') {
       alert(`📄 Boleto Gerado!\n\n💳 Valor: R$ ${totalFinal.toFixed(2)}\n\nUse o código de barras acima para pagar!\n\nApós a confirmação do pagamento, seu pedido será processado.`);
+      // Para boleto, vamos simular a confirmação após 2 segundos
+      setTimeout(async () => {
+        await salvarVendaNoBanco();
+        setPaymentConfirmed(true);
+        alert('✅ Boleto confirmado! Redirecionando para a página inicial...');
+      }, 2000);
     } else {
       const valorParcela = (totalFinal / parseInt(customerData.parcelas)).toFixed(2);
       alert(`🎉 Compra finalizada com sucesso!\n\n📦 Total a pagar: R$ ${totalFinal.toFixed(2)}\n💳 Parcelado em: ${customerData.parcelas}x de R$ ${valorParcela}\n\nObrigado pela compra!`);
-      clearCart();
-      navigate('/home');
+      await salvarVendaNoBanco();
+      setPaymentConfirmed(true);
     }
   };
 
@@ -102,9 +167,97 @@ export default function Checkout() {
     navigate('/loja-online');
   };
 
+  // Função para redirecionar manualmente
+  const handleRedirectToHome = () => {
+    setRedirecting(true);
+    clearCart();
+    navigate('/home');
+  };
+
   const dadosPix = gerarDadosPix();
   const dadosBoleto = gerarDadosBoleto();
 
+  // Se o pagamento foi confirmado, mostrar tela de confirmação com contagem regressiva
+  if (paymentConfirmed) {
+    return (
+      <div className="product-detail" style={{ maxWidth: '600px', margin: '40px auto', padding: '30px', textAlign: 'center' }}>
+        <div style={{ 
+          background: 'linear-gradient(135deg, #10b981, #059669)', 
+          padding: '40px', 
+          borderRadius: '12px', 
+          boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+          color: 'white'
+        }}>
+          <div style={{ fontSize: '4rem', marginBottom: '20px' }}>✅</div>
+          <h2 style={{ marginBottom: '15px', fontSize: '2rem', fontWeight: '900' }}>
+            Compra Confirmada!
+          </h2>
+          <p style={{ fontSize: '1.2rem', marginBottom: '10px', opacity: 0.9 }}>
+            🎉 Obrigado pela sua compra!
+          </p>
+          <p style={{ fontSize: '1.1rem', marginBottom: '25px', opacity: 0.9 }}>
+            Seu pedido foi processado com sucesso.
+          </p>
+          
+          <div style={{ 
+            background: 'rgba(255,255,255,0.2)', 
+            padding: '20px', 
+            borderRadius: '8px',
+            marginBottom: '30px'
+          }}>
+            <h3 style={{ marginBottom: '15px', fontSize: '1.3rem' }}>📦 Resumo do Pedido</h3>
+            <div style={{ textAlign: 'left', display: 'inline-block' }}>
+              <div style={{ marginBottom: '8px' }}>
+                <strong>Total:</strong> R$ {totalFinal.toFixed(2)}
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <strong>Itens:</strong> {cartItems.length}
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <strong>Frete:</strong> {customerData.frete}
+              </div>
+              <div>
+                <strong>Pagamento:</strong> {customerData.formaPagamento}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ 
+            fontSize: '1.3rem', 
+            fontWeight: '700',
+            background: 'rgba(255,255,255,0.3)',
+            padding: '15px',
+            borderRadius: '8px',
+            marginBottom: '20px'
+          }}>
+            {redirecting ? (
+              '🔄 Redirecionando...'
+            ) : (
+              `⏰ Redirecionando para Home em ${countdown} segundos...`
+            )}
+          </div>
+
+          <button
+            onClick={handleRedirectToHome}
+            className="button-link"
+            style={{
+              padding: '15px 30px',
+              fontSize: '1.1rem',
+              fontWeight: '700',
+              backgroundColor: 'white',
+              color: '#10b981', // CORRIGIDO: era '#ffffffff'
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            🏠 Ir para Home Agora
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="product-detail" style={{ maxWidth: '800px', margin: '40px auto', padding: '30px' }}>
       <h2 style={{ textAlign: 'center', color: '#cbd5e1', marginBottom: '30px', fontWeight: '900' }}>
@@ -245,7 +398,7 @@ export default function Checkout() {
             border: '2px solid #10b981'
           }}>
             <h4 style={{ color: '#10b981', marginBottom: '15px', textAlign: 'center', fontWeight: '700' }}>
-              📱 Pagamento PIX
+              📱 Pagamento PIX para Lyedson
             </h4>
             
             <div style={{ 
@@ -273,7 +426,7 @@ export default function Checkout() {
                   e.target.style.display = 'none';
                   e.target.parentElement.innerHTML = `
                     <div style="text-align: center; color: #666;">
-                      <div style="font-size: 48px; margin-bottom: 10px;">📱</div>
+                      <div style="font-size: 48px; margin-bottom: '10px';">📱</div>
                       <div>QR Code não carregou</div>
                       <div style="font-size: 12px; margin-top: 5px;">Verifique o arquivo pix.jpeg</div>
                     </div>
@@ -317,7 +470,7 @@ export default function Checkout() {
               textAlign: 'center',
               fontWeight: '600'
             }}>
-              💡 Abra seu app bancário e escaneie o QR Code acima
+              💡 O pagamento será debitado para Lyedson Matheus
             </div>
           </div>
         )}
@@ -417,57 +570,89 @@ export default function Checkout() {
                 <li key={item.id} style={{ 
                   marginBottom: '15px', 
                   display: 'flex', 
-                  justifyContent: 'space-between', 
                   alignItems: 'center',
-                  padding: '12px',
+                  gap: '15px',
+                  padding: '15px',
                   background: '#0f172a',
-                  borderRadius: '8px',
+                  borderRadius: '12px',
                   border: '1px solid #334155'
                 }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                  {/* MINIATURA DO PRODUTO */}
+                  <img
+                    src={item.thumbnail || item.image}
+                    alt={item.title}
+                    style={{
+                      width: '60px',
+                      height: '60px',
+                      objectFit: 'contain',
+                      borderRadius: '8px',
+                      border: '1px solid #334155',
+                      background: '#1e293b',
+                      flexShrink: 0
+                    }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.parentElement.innerHTML = `
+                        <div style="width: 60px; height: 60px; background: #1e293b; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.8rem; text-align: center; border: 1px solid #334155;">
+                          📷
+                        </div>
+                      ` + e.target.parentElement.innerHTML;
+                    }}
+                  />
+
+                  {/* INFORMAÇÕES DO PRODUTO */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: '600', color: '#cbd5e1', marginBottom: '4px', fontSize: '1rem' }}>
                       {item.title}
                     </div>
-                    <div style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                    <div style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '8px' }}>
                       R$ {item.price} × {item.quantity} = R$ {(item.price * item.quantity).toFixed(2)}
                     </div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <button
-                      onClick={() => handleDecrease(item.id)}
-                      style={{
-                        padding: '8px 12px',
-                        background: '#dc2626',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontWeight: '600',
-                        fontSize: '1rem',
-                        minWidth: '40px'
-                      }}
-                    >
-                      -
-                    </button>
-                    <span style={{ color: '#cbd5e1', fontWeight: '600', minWidth: '20px', textAlign: 'center' }}>
-                      {item.quantity}
-                    </span>
-                    <button
-                      onClick={() => handleIncrease(item.id)}
-                      style={{
-                        padding: '8px 12px',
-                        background: '#16a34a',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontWeight: '600',
-                        fontSize: '1rem',
-                        minWidth: '40px'
-                      }}
-                    >
-                      +
-                    </button>
+                    
+                    {/* CONTROLES DE QUANTIDADE */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <button
+                        onClick={() => handleDecrease(item.id)}
+                        style={{
+                          padding: '6px 10px',
+                          background: '#dc2626',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                          fontSize: '0.9rem',
+                          minWidth: '35px'
+                        }}
+                      >
+                        -
+                      </button>
+                      <span style={{ 
+                        color: '#cbd5e1', 
+                        fontWeight: '600', 
+                        minWidth: '20px', 
+                        textAlign: 'center',
+                        fontSize: '1rem'
+                      }}>
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() => handleIncrease(item.id)}
+                        style={{
+                          padding: '6px 10px',
+                          background: '#16a34a',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                          fontSize: '0.9rem',
+                          minWidth: '35px'
+                        }}
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                 </li>
               ))}

@@ -145,10 +145,9 @@ export default function Categories() {
         onMouseEnter={(e) => (e.currentTarget.style.background = '#dc2626')}
         onMouseLeave={(e) => (e.currentTarget.style.background = '#ef4444')}
       >
-        ⬅ Voltar para Seções
+        ⬅ Voltar para Página Inicial
       </div>
 
-      {/* Botão Loja Online - NOVO */}
       <div
         onClick={() => navigate('/loja-online')}
         style={{
@@ -168,14 +167,13 @@ export default function Categories() {
         onMouseEnter={(e) => (e.currentTarget.style.background = '#059669')}
         onMouseLeave={(e) => (e.currentTarget.style.background = '#10b981')}
       >
-        🛒 Loja Online
+        🛒ㅤㅤㅤLoja Onlineㅤㅤㅤ
       </div>
 
       <h2 style={{ marginBottom: 30, fontWeight: '900' }}>
         Produtos Disponíveis ⏬
       </h2>
-
-      {/* Barra de pesquisa */}
+      
       <input
         type="text"
         placeholder="Pesquisar categoria ou produto..."
@@ -191,7 +189,6 @@ export default function Categories() {
         }}
       />
 
-      {/* Botão do carrinho */}
       <button
         onClick={() => navigate('/checkout')}
         style={{
