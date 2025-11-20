@@ -11,6 +11,7 @@ export default function LojaOnline() {
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState("");
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -22,12 +23,26 @@ export default function LojaOnline() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const { data, error } = await supabase
-        .from("product_2v")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) setErro("Erro ao buscar produtos");
-      else setProducts(data);
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("product_2v")
+          .select("*")
+          .order("created_at", { ascending: false });
+        
+        if (error) {
+          console.error("Erro ao buscar produtos:", error);
+          setErro("Erro ao buscar produtos");
+        } else {
+          console.log("Produtos carregados:", data);
+          setProducts(data || []);
+        }
+      } catch (error) {
+        console.error("Erro inesperado:", error);
+        setErro("Erro ao carregar produtos");
+      } finally {
+        setLoading(false);
+      }
     };
     fetchProducts();
   }, []);
@@ -37,11 +52,27 @@ export default function LojaOnline() {
     if (!confirm) return;
 
     const { error } = await supabase.from("product_2v").delete().eq("id", id);
-    if (error) setErro("Erro ao deletar produto");
-    else setSucesso("Produto deletado com sucesso!");
+    if (error) {
+      setErro("Erro ao deletar produto");
+    } else {
+      setSucesso("Produto deletado com sucesso!");
+      // Atualiza a lista localmente
+      setProducts(products.filter(p => p.id !== id));
+    }
   };
 
   const handleAddToCart = (product) => {
+    if (!user) {
+      setErro("Você precisa estar logado para adicionar produtos ao carrinho");
+      return;
+    }
+
+    // Verifica se vendedor está tentando comprar seu próprio produto
+    if (user.user_metadata?.vendedor && product.user_id === user.id) {
+      setErro("Vendedores não podem comprar seus próprios produtos");
+      return;
+    }
+
     const itemExists = cartItems.find((item) => item.id === product.id);
     if (itemExists) {
       setCartItems(
@@ -62,6 +93,24 @@ export default function LojaOnline() {
     prod.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     prod.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        background: '#0f172a',
+        color: '#cbd5e1'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🔄</div>
+          <div>Carregando produtos...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="products-list" style={{ position: 'relative', minHeight: '100vh', paddingTop: '40px' }}>
@@ -180,9 +229,12 @@ export default function LojaOnline() {
                 src={p.thumbnail}
                 alt={p.title}
                 className="product-image"
+                onError={(e) => {
+                  e.target.src = 'https://via.placeholder.com/150x150/1e293b/94a3b8?text=📷';
+                }}
               />
               <div className="product-info">{p.title}</div>
-              <div className="product-price">${p.price}</div>
+              <div className="product-price">R$ {p.price}</div>
               <p style={{ 
                 color: '#94a3b8', 
                 fontSize: '0.9rem', 
@@ -194,6 +246,7 @@ export default function LojaOnline() {
 
               {user && (
                 <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '15px' }}>
+                  {/* Botão Deletar - apenas admin ou dono do produto */}
                   {(user.user_metadata?.admin || p.user_id === user.id) && (
                     <button
                       onClick={() => handleDelete(p.id)}
@@ -214,7 +267,8 @@ export default function LojaOnline() {
                     </button>
                   )}
 
-                  {(!user.user_metadata?.vendedor) && (
+                  {/* Botão Adicionar ao Carrinho - para todos exceto vendedores comprando seus próprios produtos */}
+                  {(!user.user_metadata?.vendedor || user.user_metadata?.admin || p.user_id !== user.id) && (
                     <button
                       onClick={() => handleAddToCart(p)}
                       style={{
@@ -230,9 +284,28 @@ export default function LojaOnline() {
                       onMouseOver={(e) => e.currentTarget.style.background = '#15803d'}
                       onMouseOut={(e) => e.currentTarget.style.background = '#16a34a'}
                     >
-                      Adicionar ao Carrinho
+                      🛒 Adicionar ao Carrinho
                     </button>
                   )}
+                </div>
+              )}
+
+              {!user && (
+                <div style={{ textAlign: 'center', marginTop: '15px' }}>
+                  <button
+                    onClick={() => navigate('/login')}
+                    style={{
+                      padding: '8px 16px',
+                      background: '#3b82f6',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '600'
+                    }}
+                  >
+                    🔐 Fazer Login para Comprar
+                  </button>
                 </div>
               )}
             </div>

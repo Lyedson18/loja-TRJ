@@ -30,14 +30,6 @@ export default function Home() {
     };
   }, [navigate]);
 
-  const getAccountType = () => {
-    if (!user) return '';
-    const meta = user.user_metadata || {};
-    if (meta.admin) return 'Administrador';
-    if (meta.vendedor) return 'Vendedor';
-    return 'Cliente';
-  };
-
   const isAdminOrVendedor = () => {
     if (!user) return false;
     const meta = user.user_metadata || {};
@@ -48,13 +40,6 @@ export default function Home() {
     if (!user) return false;
     const meta = user.user_metadata || {};
     return meta.admin;
-  };
-
-  const podeComprar = () => {
-    if (!user) return false;
-    const meta = user.user_metadata || {};
-    // Só clientes normais podem comprar (não admin, não vendedor)
-    return !meta.admin && !meta.vendedor;
   };
 
   return (
@@ -101,7 +86,7 @@ export default function Home() {
           >
             <span>🙎‍♂️</span>
             <span style={{ whiteSpace: 'nowrap' }}>
-              {getAccountType()} - {user.email}
+              Minha Conta - {user.email}
             </span>
           </button>
         </div>
@@ -116,37 +101,13 @@ export default function Home() {
         Qualidade, tecnologia e preços incríveis para você Consumidor!
       </p>
 
-      {/* LOJA FÍSICA E ONLINE - TODOS PODEM VER (MENOS COMPRAR SE FOR VENDEDOR/ADMIN) */}
+      {/* LOJA FÍSICA E ONLINE - TODOS PODEM VER */}
       <Link to="/categories" className="button-link">
-        Loja Física 🛒
+        Loja Física: ($) 🛒
       </Link>
       <Link to="/loja-online" className="button-link">
-        Loja Online 🛒
+        Loja Online: (R$) 🛒
       </Link>
-
-      {/* MENSAGEM PARA VENDEDORES E ADMINS SOBRE COMPRAS */}
-      {!podeComprar() && user && (
-        <div style={{
-          background: '#1e293b',
-          padding: '20px',
-          borderRadius: '12px',
-          textAlign: 'center',
-          border: '2px solid #334155',
-          marginBottom: '15px',
-          maxWidth: '500px',
-          margin: '0 auto 15px auto'
-        }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>
-            {user.user_metadata?.admin ? '👑' : '📊'}
-          </div>
-          <p style={{ color: '#94a3b8', lineHeight: '1.5', fontSize: '0.9rem' }}>
-            {user.user_metadata?.admin 
-              ? 'Como administrador, você pode visualizar as lojas mas não realizar compras.' 
-              : 'Como vendedor, você pode visualizar as lojas mas não realizar compras no Online!.'
-            }
-          </p>
-        </div>
-      )}
     
       {/* CADASTRAR PRODUTOS - PARA ADMINS E VENDEDORES */}
       {isAdminOrVendedor() && (

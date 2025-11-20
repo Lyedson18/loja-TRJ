@@ -2,10 +2,11 @@ import React, { useState, useContext, useEffect } from 'react';
 import { CartContext } from './CartContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "./utils/supabase";
+import { logAction, LogActions } from './utils/logger';
 import pixQRCode from './pix.jpeg';
 
 export default function Checkout() {
-  const { cartItems, clearCart, setCartItems } = useContext(CartContext);
+  const { cartItems, clearCart, updateQuantity, getCartTotal, removeFromCart } = useContext(CartContext); // ← ADICIONEI removeFromCart
   const navigate = useNavigate();
   const [customerData, setCustomerData] = useState({
     nome: '',
@@ -18,8 +19,7 @@ export default function Checkout() {
     frete: 'normal',
   });
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
-  const [countdown, setCountdown] = useState(10);
-  const [redirecting, setRedirecting] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,21 +27,22 @@ export default function Checkout() {
   };
 
   const handleIncrease = (id) => {
-    const newCart = cartItems.map(item =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    setCartItems(newCart);
+    const item = cartItems.find(item => item.id === id);
+    if (item) {
+      updateQuantity(id, item.quantity + 1);
+    }
   };
 
   const handleDecrease = (id) => {
-    const newCart = cartItems
-      .map(item =>
-        item.id === id
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
-      .filter(item => item.quantity > 0);
-    setCartItems(newCart);
+    const item = cartItems.find(item => item.id === id);
+    if (item) {
+      if (item.quantity > 1) {
+        updateQuantity(id, item.quantity - 1);
+      } else {
+        // ← AQUI: Se quantidade for 1 e apertar -, remove o produto
+        removeFromCart(id);
+      }
+    }
   };
 
   const fretePreco = customerData.frete === 'economico' ? 10
@@ -50,31 +51,25 @@ export default function Checkout() {
                    : customerData.frete === 'ultra' ? 100
                    : 0;
 
-  const totalProdutos = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const totalProdutos = getCartTotal();
   const totalFinal = totalProdutos + fretePreco;
-
-  // Efeito para o redirecionamento automático
-  useEffect(() => {
-    if (paymentConfirmed && countdown > 0 && !redirecting) {
-      const timer = setTimeout(() => {
-        setCountdown(countdown - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    } else if (paymentConfirmed && countdown === 0 && !redirecting) {
-      setRedirecting(true);
-      clearCart();
-      navigate('/home');
-    }
-  }, [paymentConfirmed, countdown, redirecting, clearCart, navigate]);
 
   // FUNÇÃO PARA SALVAR VENDA NO SUPABASE
   const salvarVendaNoBanco = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      setProcessing(true);
       
+      // Verificar usuário
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      console.log('👤 Usuário:', user);
+      
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
+
       const vendaData = {
-        user_id: user?.id,
-        user_email: user?.email || 'guest',
+        user_id: user.id,
+        user_email: user.email,
         produtos: cartItems,
         total: totalFinal,
         forma_pagamento: customerData.formaPagamento,
@@ -85,20 +80,44 @@ export default function Checkout() {
           cidade: customerData.cidade,
           estado: customerData.estado,
           cep: customerData.cep
-        }
+        },
+        created_at: new Date().toISOString()
       };
 
-      const { error } = await supabase
+      console.log('💾 Salvando venda:', vendaData);
+
+      // ✅ MODIFICADO: removido "private."
+      const { data, error } = await supabase
         .from('vendas')
-        .insert(vendaData);
+        .insert(vendaData)
+        .select();
 
       if (error) {
-        console.error('Erro ao salvar venda:', error);
+        console.error('❌ Erro ao salvar venda:', error);
+        throw error;
       } else {
-        console.log('✅ Venda salva no banco com sucesso!');
+        console.log('✅ Venda salva com sucesso:', data);
+        
+        // Log da compra
+        await logAction(
+          LogActions.COMPLETE_PURCHASE,
+          `Compra finalizada - Total: R$ ${totalFinal.toFixed(2)} - Itens: ${cartItems.length}`,
+          null,
+          'sale',
+          { 
+            total: totalFinal, 
+            items_count: cartItems.length,
+            payment_method: customerData.formaPagamento 
+          }
+        );
+        
+        return data;
       }
     } catch (error) {
-      console.error('Erro ao salvar venda:', error);
+      console.error('❌ Erro ao salvar venda:', error);
+      throw error;
+    } finally {
+      setProcessing(false);
     }
   };
 
@@ -135,27 +154,42 @@ export default function Checkout() {
   };
 
   const handleFinalizar = async () => {
-    if (customerData.formaPagamento === 'pix') {
-      alert(`📱 Pagamento via PIX\n\n💳 Valor: R$ ${totalFinal.toFixed(2)}\n\nEscaneie o QR Code acima para pagar!\n\nApós o pagamento, seu pedido será processado.`);
-      // Para PIX, vamos simular a confirmação após 2 segundos
-      setTimeout(async () => {
-        await salvarVendaNoBanco();
-        setPaymentConfirmed(true);
-        alert('✅ Pagamento PIX confirmado! Redirecionando para a página inicial...');
-      }, 2000);
-    } else if (customerData.formaPagamento === 'boleto') {
-      alert(`📄 Boleto Gerado!\n\n💳 Valor: R$ ${totalFinal.toFixed(2)}\n\nUse o código de barras acima para pagar!\n\nApós a confirmação do pagamento, seu pedido será processado.`);
-      // Para boleto, vamos simular a confirmação após 2 segundos
-      setTimeout(async () => {
-        await salvarVendaNoBanco();
-        setPaymentConfirmed(true);
-        alert('✅ Boleto confirmado! Redirecionando para a página inicial...');
-      }, 2000);
-    } else {
-      const valorParcela = (totalFinal / parseInt(customerData.parcelas)).toFixed(2);
-      alert(`🎉 Compra finalizada com sucesso!\n\n📦 Total a pagar: R$ ${totalFinal.toFixed(2)}\n💳 Parcelado em: ${customerData.parcelas}x de R$ ${valorParcela}\n\nObrigado pela compra!`);
+    if (processing) return;
+
+    // Validar dados do cliente
+    if (!customerData.nome || !customerData.Rua || !customerData.cidade || !customerData.estado || !customerData.cep) {
+      alert('Por favor, preencha todos os dados de entrega.');
+      return;
+    }
+
+    try {
+      console.log('🎯 Iniciando finalização da compra...');
+      
+      // SALVAR A VENDA PRIMEIRO
       await salvarVendaNoBanco();
+      
+      // DEPOIS MOSTRAR CONFIRMAÇÃO BASEADA NO PAGAMENTO
+      if (customerData.formaPagamento === 'pix') {
+        alert(`📱 Pagamento via PIX\n\n💳 Valor: R$ ${totalFinal.toFixed(2)}\n\nEscaneie o QR Code acima para pagar!\n\nApós o pagamento, seu pedido será processado.`);
+      } else if (customerData.formaPagamento === 'boleto') {
+        alert(`📄 Boleto Gerado!\n\n💳 Valor: R$ ${totalFinal.toFixed(2)}\n\nUse o código de barras acima para pagar!\n\nApós a confirmação do pagamento, seu pedido será processado.`);
+      } else {
+        const valorParcela = (totalFinal / parseInt(customerData.parcelas)).toFixed(2);
+        alert(`🎉 Compra finalizada com sucesso!\n\n📦 Total a pagar: R$ ${totalFinal.toFixed(2)}\n💳 Parcelado em: ${customerData.parcelas}x de R$ ${valorParcela}\n\nObrigado pela compra!`);
+      }
+
+      // LIMPAR CARRINHO E REDIRECIONAR
+      await clearCart();
       setPaymentConfirmed(true);
+      
+      // Redirecionar após 2 segundos
+      setTimeout(() => {
+        navigate('/home');
+      }, 2000);
+
+    } catch (error) {
+      console.error('❌ Erro no processo de finalização:', error);
+      alert(`❌ Erro ao processar pedido: ${error.message}\n\nTente novamente.`);
     }
   };
 
@@ -167,17 +201,10 @@ export default function Checkout() {
     navigate('/loja-online');
   };
 
-  // Função para redirecionar manualmente
-  const handleRedirectToHome = () => {
-    setRedirecting(true);
-    clearCart();
-    navigate('/home');
-  };
-
   const dadosPix = gerarDadosPix();
   const dadosBoleto = gerarDadosBoleto();
 
-  // Se o pagamento foi confirmado, mostrar tela de confirmação com contagem regressiva
+  // Se o pagamento foi confirmado, mostrar confirmação
   if (paymentConfirmed) {
     return (
       <div className="product-detail" style={{ maxWidth: '600px', margin: '40px auto', padding: '30px', textAlign: 'center' }}>
@@ -196,63 +223,8 @@ export default function Checkout() {
             🎉 Obrigado pela sua compra!
           </p>
           <p style={{ fontSize: '1.1rem', marginBottom: '25px', opacity: 0.9 }}>
-            Seu pedido foi processado com sucesso.
+            Redirecionando para a página inicial...
           </p>
-          
-          <div style={{ 
-            background: 'rgba(255,255,255,0.2)', 
-            padding: '20px', 
-            borderRadius: '8px',
-            marginBottom: '30px'
-          }}>
-            <h3 style={{ marginBottom: '15px', fontSize: '1.3rem' }}>📦 Resumo do Pedido</h3>
-            <div style={{ textAlign: 'left', display: 'inline-block' }}>
-              <div style={{ marginBottom: '8px' }}>
-                <strong>Total:</strong> R$ {totalFinal.toFixed(2)}
-              </div>
-              <div style={{ marginBottom: '8px' }}>
-                <strong>Itens:</strong> {cartItems.length}
-              </div>
-              <div style={{ marginBottom: '8px' }}>
-                <strong>Frete:</strong> {customerData.frete}
-              </div>
-              <div>
-                <strong>Pagamento:</strong> {customerData.formaPagamento}
-              </div>
-            </div>
-          </div>
-
-          <div style={{ 
-            fontSize: '1.3rem', 
-            fontWeight: '700',
-            background: 'rgba(255,255,255,0.3)',
-            padding: '15px',
-            borderRadius: '8px',
-            marginBottom: '20px'
-          }}>
-            {redirecting ? (
-              '🔄 Redirecionando...'
-            ) : (
-              `⏰ Redirecionando para Home em ${countdown} segundos...`
-            )}
-          </div>
-
-          <button
-            onClick={handleRedirectToHome}
-            className="button-link"
-            style={{
-              padding: '15px 30px',
-              fontSize: '1.1rem',
-              fontWeight: '700',
-              backgroundColor: 'white',
-              color: '#10b981', // CORRIGIDO: era '#ffffffff'
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer'
-            }}
-          >
-            🏠 Ir para Home Agora
-          </button>
         </div>
       </div>
     );
@@ -263,6 +235,33 @@ export default function Checkout() {
       <h2 style={{ textAlign: 'center', color: '#cbd5e1', marginBottom: '30px', fontWeight: '900' }}>
         🛒 Finalizar Compra
       </h2>
+
+      {/* Botão de Debug */}
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <button
+          onClick={async () => {
+            console.log('🐛 Testando tabela vendas...');
+            // ✅ MODIFICADO: removido "private."
+            const { data, error } = await supabase
+              .from('vendas')
+              .select('count')
+              .single();
+            console.log('🐛 Resultado:', { data, error });
+            alert(`Tabela vendas: ${error ? 'ERRO: ' + error.message : 'OK - ' + data?.count + ' registros'}`);
+          }}
+          style={{
+            padding: '8px 16px',
+            background: '#f59e0b',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '0.8rem'
+          }}
+        >
+          Testar Conexão com: Vendas
+        </button>
+      </div>
 
       <section style={{ marginBottom: '30px', background: 'linear-gradient(135deg, #1e293b, #0f172a)', padding: '25px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.3)' }}>
         <h3 style={{ marginBottom: '20px', color: '#cbd5e1', fontSize: '1.4rem', fontWeight: '700' }}>📋 Dados do Cliente</h3>
@@ -706,18 +705,19 @@ export default function Checkout() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         <button
           onClick={handleFinalizar}
-          disabled={cartItems.length === 0}
+          disabled={cartItems.length === 0 || processing}
           title={cartItems.length === 0 ? 'Carrinho vazio' : 'Finalizar compra'}
           className="button-link"
           style={{
             padding: '18px 40px',
             fontSize: '1.2rem',
             fontWeight: '700',
-            opacity: cartItems.length === 0 ? 0.6 : 1,
-            cursor: cartItems.length === 0 ? 'not-allowed' : 'pointer'
+            opacity: (cartItems.length === 0 || processing) ? 0.6 : 1,
+            cursor: (cartItems.length === 0 || processing) ? 'not-allowed' : 'pointer'
           }}
         >
-          {customerData.formaPagamento === 'pix' ? '📱 Confirmar Pagamento PIX' : 
+          {processing ? '🔄 Processando...' : 
+           customerData.formaPagamento === 'pix' ? '📱 Confirmar Pagamento PIX' : 
            customerData.formaPagamento === 'boleto' ? '📄 Confirmar Boleto' : 
            '✅ Finalizar Compra'}
         </button>

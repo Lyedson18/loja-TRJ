@@ -36,20 +36,83 @@ export default function AddProduct() {
       return;
     }
 
-    const { data, error } = await supabase
-      .from("product_2v")
-      .insert([
-        { title, description, price: parseFloat(price), thumbnail, user_id: user.id },
-      ]);
-
-    if (error) setErro("Erro ao adicionar produto: " + error.message);
-    else {
-      setSucesso("Produto adicionado com sucesso!");
-      setTitle("");
-      setDescription("");
-      setPrice("");
-      setThumbnail("");
+    // VALIDAÇÃO DO PREÇO
+    const priceValue = parseFloat(price);
+    
+    // Verificar se é um número válido
+    if (isNaN(priceValue)) {
+      setErro("Preço deve ser um número válido.");
+      return;
     }
+
+    // Verificar se o preço é positivo
+    if (priceValue <= 0) {
+      setErro("Preço deve ser maior que zero.");
+      return;
+    }
+
+    // Verificar se o preço não é muito grande (max: 9999999.99)
+    if (priceValue > 9999999.99) {
+      setErro("Preço muito alto. Máximo permitido: 9.999.999,99");
+      return;
+    }
+
+    // Verificar se não tem mais de 2 casas decimais
+    const decimalPart = price.toString().split('.')[1];
+    if (decimalPart && decimalPart.length > 2) {
+      setErro("Preço deve ter no máximo 2 casas decimais.");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("product_2v")
+        .insert([
+          { 
+            title, 
+            description, 
+            price: priceValue, 
+            thumbnail, 
+            user_id: user.id 
+          },
+        ])
+        .select();
+
+      if (error) {
+        console.error("Erro detalhado:", error);
+        setErro("Erro ao adicionar produto: " + error.message);
+      } else {
+        setSucesso("Produto adicionado com sucesso!");
+        setTitle("");
+        setDescription("");
+        setPrice("");
+        setThumbnail("");
+      }
+    } catch (error) {
+      console.error("Erro inesperado:", error);
+      setErro("Erro inesperado ao adicionar produto.");
+    }
+  };
+
+  // Função para formatar o preço enquanto digita
+  const handlePriceChange = (e) => {
+    let value = e.target.value;
+    
+    // Remove caracteres não numéricos exceto ponto decimal
+    value = value.replace(/[^\d.]/g, '');
+    
+    // Remove pontos decimais extras
+    const parts = value.split('.');
+    if (parts.length > 2) {
+      value = parts[0] + '.' + parts.slice(1).join('');
+    }
+    
+    // Limita a 2 casas decimais
+    if (parts.length === 2 && parts[1].length > 2) {
+      value = parts[0] + '.' + parts[1].substring(0, 2);
+    }
+    
+    setPrice(value);
   };
 
   return (
@@ -148,14 +211,13 @@ export default function AddProduct() {
 
         <div>
           <label style={{ color: '#cbd5e1', marginBottom: '8px', display: 'block', fontWeight: '600' }}>
-            Preço (USD):
+            Preço (R$):
           </label>
           <input
-            type="number"
-            step="0.01"
+            type="text"
             placeholder="0.00"
             value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            onChange={handlePriceChange}
             style={{
               width: '100%',
               padding: '12px',
@@ -166,6 +228,9 @@ export default function AddProduct() {
               fontSize: '1rem'
             }}
           />
+          <small style={{ color: '#94a3b8', fontSize: '0.8rem' }}>
+            Exemplo: 29.99, 150.50, 999.00
+          </small>
         </div>
 
         <div>

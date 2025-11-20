@@ -1,5 +1,4 @@
 import { supabase } from './supabase';
-
 export const logAction = async (actionType, description, targetId = null, targetType = null, metadata = {}) => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
@@ -28,7 +27,6 @@ export const logAction = async (actionType, description, targetId = null, target
   }
 };
 
-// Ações pré-definidas
 export const LogActions = {
   USER_LOGIN: 'user_login',
   USER_REGISTER: 'user_register', 

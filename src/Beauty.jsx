@@ -91,7 +91,7 @@ export default function Beauty() {
         className="back-home-button"
         onClick={() => navigate('/categories')}
       >
-        Voltar para Categorias
+        Voltar para 
       </button>
     </div>
   );
