@@ -9,7 +9,14 @@ export function CartProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [useLocalStorage, setUseLocalStorage] = useState(false);
 
-  // Carregar carrinho do Supabase quando o usuário logar
+  // 🔥 Sempre que cartItems mudar, salvar automaticamente no localStorage
+  useEffect(() => {
+    if (cartItems.length > 0 || useLocalStorage) {
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    }
+  }, [cartItems, useLocalStorage]);
+
+  // Carregar carrinho do Supabase ou LocalStorage
   useEffect(() => {
     loadCartFromSupabase();
   }, []);
@@ -18,7 +25,6 @@ export function CartProvider({ children }) {
     try {
       setLoading(true);
       
-      // Tenta carregar do Supabase primeiro
       if (cartService && typeof cartService.getCart === 'function') {
         const { data, error } = await cartService.getCart();
         
@@ -26,7 +32,6 @@ export function CartProvider({ children }) {
           console.error('Erro ao carregar carrinho do Supabase, usando localStorage:', error);
           loadFromLocalStorage();
         } else if (data) {
-          // Transformar dados do Supabase para o formato local
           const formattedItems = data.map(item => ({
             id: item.product_2v.id,
             title: item.product_2v.title,
@@ -34,7 +39,7 @@ export function CartProvider({ children }) {
             price: parseFloat(item.product_2v.price),
             thumbnail: item.product_2v.thumbnail,
             quantity: item.quantity,
-            cartItemId: item.id // ID do item no carrinho do Supabase
+            cartItemId: item.id 
           }));
           
           setCartItems(formattedItems);
@@ -63,50 +68,36 @@ export function CartProvider({ children }) {
     }
   };
 
-  const saveToLocalStorage = (items) => {
-    try {
-      localStorage.setItem('cartItems', JSON.stringify(items));
-    } catch (error) {
-      console.error('Erro ao salvar no localStorage:', error);
-    }
-  };
-
   const addToCart = async (product) => {
     try {
-      // Se cartService estiver disponível, usa ele
       if (cartService && typeof cartService.addToCart === 'function' && !useLocalStorage) {
         const { data, error } = await cartService.addToCart(product.id, 1);
         
         if (error) {
-          console.error('Erro ao adicionar ao carrinho no Supabase, usando localStorage:', error);
+          console.error('Erro Supabase, usando localStorage:', error);
           setUseLocalStorage(true);
           addToCartLocal(product);
           return;
         }
 
-        // Atualizar estado local
         setCartItems(prev => {
           const existing = prev.find(item => item.id === product.id);
-          let newItems;
           if (existing) {
-            newItems = prev.map(item =>
+            return prev.map(item =>
               item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
             );
           } else {
-            newItems = [...prev, { 
+            return [...prev, { 
               ...product, 
               quantity: 1,
               cartItemId: data.id 
             }];
           }
-          return newItems;
         });
       } else {
-        // Usa localStorage
         addToCartLocal(product);
       }
 
-      // Log da ação
       await logAction(
         LogActions.ADD_TO_CART,
         `Produto adicionado ao carrinho: ${product.title}`,
@@ -115,7 +106,7 @@ export function CartProvider({ children }) {
       );
 
     } catch (error) {
-      console.error('Erro ao adicionar ao carrinho, usando localStorage:', error);
+      console.error('Erro ao adicionar, usando localStorage:', error);
       setUseLocalStorage(true);
       addToCartLocal(product);
     }
@@ -124,16 +115,13 @@ export function CartProvider({ children }) {
   const addToCartLocal = (product) => {
     setCartItems(prev => {
       const existing = prev.find(item => item.id === product.id);
-      let newItems;
       if (existing) {
-        newItems = prev.map(item =>
+        return prev.map(item =>
           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       } else {
-        newItems = [...prev, { ...product, quantity: 1 }];
+        return [...prev, { ...product, quantity: 1 }];
       }
-      saveToLocalStorage(newItems);
-      return newItems;
     });
   };
 
@@ -142,41 +130,28 @@ export function CartProvider({ children }) {
       const itemToRemove = cartItems.find(item => item.id === productId);
       if (!itemToRemove) return;
 
-      // Se cartService estiver disponível, usa ele
       if (cartService && typeof cartService.removeFromCart === 'function' && !useLocalStorage && itemToRemove.cartItemId) {
         const { error } = await cartService.removeFromCart(itemToRemove.cartItemId);
         
         if (error) {
-          console.error('Erro ao remover do carrinho no Supabase, usando localStorage:', error);
+          console.error('Erro Supabase, usando localStorage:', error);
           setUseLocalStorage(true);
         }
       }
 
-      // Atualizar estado local (sempre faz isso)
-      setCartItems(prev => {
-        const newItems = prev.filter(item => item.id !== productId);
-        if (useLocalStorage) {
-          saveToLocalStorage(newItems);
-        }
-        return newItems;
-      });
+      setCartItems(prev => prev.filter(item => item.id !== productId));
 
-      // Log da ação
       await logAction(
         LogActions.REMOVE_FROM_CART,
-        `Produto removido do carrinho: ${itemToRemove.title}`,
+        `Produto removido: ${itemToRemove.title}`,
         productId,
         'product'
       );
 
     } catch (error) {
-      console.error('Erro ao remover do carrinho, usando localStorage:', error);
+      console.error('Erro ao remover, usando localStorage:', error);
       setUseLocalStorage(true);
-      setCartItems(prev => {
-        const newItems = prev.filter(item => item.id !== productId);
-        saveToLocalStorage(newItems);
-        return newItems;
-      });
+      setCartItems(prev => prev.filter(item => item.id !== productId));
     }
   };
 
@@ -190,60 +165,47 @@ export function CartProvider({ children }) {
       const itemToUpdate = cartItems.find(item => item.id === productId);
       if (!itemToUpdate) return;
 
-      // Se cartService estiver disponível, usa ele
       if (cartService && typeof cartService.updateQuantity === 'function' && !useLocalStorage && itemToUpdate.cartItemId) {
         const { error } = await cartService.updateQuantity(itemToUpdate.cartItemId, newQuantity);
         
         if (error) {
-          console.error('Erro ao atualizar quantidade no Supabase, usando localStorage:', error);
+          console.error('Erro Supabase, usando localStorage:', error);
           setUseLocalStorage(true);
         }
       }
 
-      // Atualizar estado local (sempre faz isso)
-      setCartItems(prev => {
-        const newItems = prev.map(item =>
+      setCartItems(prev =>
+        prev.map(item =>
           item.id === productId ? { ...item, quantity: newQuantity } : item
-        );
-        if (useLocalStorage) {
-          saveToLocalStorage(newItems);
-        }
-        return newItems;
-      });
+        )
+      );
 
     } catch (error) {
-      console.error('Erro ao atualizar quantidade, usando localStorage:', error);
+      console.error('Erro ao atualizar quantidade:', error);
       setUseLocalStorage(true);
-      setCartItems(prev => {
-        const newItems = prev.map(item =>
+      setCartItems(prev =>
+        prev.map(item =>
           item.id === productId ? { ...item, quantity: newQuantity } : item
-        );
-        saveToLocalStorage(newItems);
-        return newItems;
-      });
+        )
+      );
     }
   };
 
   const clearCart = async () => {
     try {
-      // Se cartService estiver disponível, usa ele
       if (cartService && typeof cartService.clearCart === 'function' && !useLocalStorage) {
         const { error } = await cartService.clearCart();
-        
         if (error) {
-          console.error('Erro ao limpar carrinho no Supabase, usando localStorage:', error);
+          console.error('Erro Supabase, usando localStorage:', error);
           setUseLocalStorage(true);
         }
       }
 
-      // Atualizar estado local (sempre faz isso)
       setCartItems([]);
-      if (useLocalStorage) {
-        localStorage.removeItem('cartItems');
-      }
+      localStorage.removeItem('cartItems');
 
     } catch (error) {
-      console.error('Erro ao limpar carrinho, usando localStorage:', error);
+      console.error('Erro ao limpar:', error);
       setUseLocalStorage(true);
       setCartItems([]);
       localStorage.removeItem('cartItems');
@@ -277,7 +239,7 @@ export function CartProvider({ children }) {
   );
 }
 
-// Hook personalizado para usar o carrinho
+// Hook personalizado
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {

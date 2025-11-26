@@ -555,7 +555,7 @@ export default function Checkout() {
           <div style={{ textAlign: 'center', color: '#94a3b8', padding: '20px' }}>
             <p style={{ fontSize: '1.1rem' }}>🛒 Seu carrinho está vazio</p>
             <button
-              onClick={() => navigate('/categories')}
+              onClick={() => navigate('/home')}
               className="button-link"
               style={{ marginTop: '15px', padding: '12px 25px' }}
             >
